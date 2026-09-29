@@ -1,0 +1,31 @@
+# ==========================================
+# Frontend (Next.js / Node / TypeScript)
+# ==========================================
+frontend/node_modules/
+frontend/.pnp
+frontend/.pnp.*
+frontend/.yarn/*
+!frontend/.yarn/patches
+!frontend/.yarn/plugins
+!frontend/.yarn/releases
+!frontend/.yarn/versions
+
+# Next.js Build & Outputs
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/coverage/
+
+# Logs & Debug
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.pnpm-debug.log*
+
+# Variáveis de Ambiente Frontend
+frontend/.env*
+!frontend/.env.example
+
+# Vercel & Cache de Typescript
+frontend/.vercel
+frontend/*.tsbuildinfo
