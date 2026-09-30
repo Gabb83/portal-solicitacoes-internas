@@ -7,7 +7,7 @@ import SideMenuOpcao from "./SideMenuOpcao";
 const itensNavegacao = [
     { nome: "Dashboard", href: "/", icon: ChartNoAxesCombined },
     { nome: "Nova Solicitação", href: "/nova-solicitacao", icon: FilePlus },
-    { nome: "Gerenciar Solicitações", href: "/", icon: FolderOpen },
+    { nome: "Gerenciar Solicitações", href: "/gerenciar-solicitacoes", icon: FolderOpen },
     { nome: "Perfil", href: "/perfil", icon: User },
 ];
 
