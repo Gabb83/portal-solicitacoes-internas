@@ -6,7 +6,7 @@ import SideMenuOpcao from "./SideMenuOpcao";
 
 const itensNavegacao = [
     { nome: "Dashboard", href: "/", icon: ChartNoAxesCombined },
-    { nome: "Nova Solicitação", href: "/", icon: FilePlus },
+    { nome: "Nova Solicitação", href: "/nova-solicitacao", icon: FilePlus },
     { nome: "Gerenciar Solicitações", href: "/", icon: FolderOpen },
     { nome: "Perfil", href: "/perfil", icon: User },
 ];
@@ -25,6 +25,7 @@ export default function SideMenu() {
           const isAtivo = idx.href === "/" ? pathname === "/" : pathname.startsWith(idx.href);
           return(
             <SideMenuOpcao
+              key={idx.nome}
               nome={idx.nome}
               href={idx.href}
               icon={idx.icon}
