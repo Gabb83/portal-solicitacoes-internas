@@ -1,0 +1,107 @@
+package com.empresa.portal_solicitacoes.services;
+
+import com.empresa.portal_solicitacoes.repositories.*;
+import com.empresa.portal_solicitacoes.models.*;
+import com.empresa.portal_solicitacoes.dtos.*;
+import com.empresa.portal_solicitacoes.enums.*;
+import com.empresa.portal_solicitacoes.exceptions.*;
+
+
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service 
+public class SolicitacaoService {
+  private final SolicitacaoRepository solicitacaoRepository;
+  private final UsuarioRepository usuarioRepository;
+  private final CategoriaRepository categoriaRepository;
+
+  public SolicitacaoService(SolicitacaoRepository solicitacaoRepository, CategoriaRepository categoriaRepository, UsuarioRepository usuarioRepository) {
+    this.solicitacaoRepository = solicitacaoRepository;
+    this.categoriaRepository = categoriaRepository;
+    this.usuarioRepository = usuarioRepository;
+  }
+
+  @Transactional
+    public SolicitacaoResponseDTO criar(SolicitacaoRequestDTO dto) {
+        Categoria categoria = categoriaRepository.findById(dto.categoriaId())
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada com o ID: " + dto.categoriaId()));
+
+        Usuario usuario = usuarioRepository.findById(dto.usuarioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o ID: " + dto.usuarioId()));
+
+        Solicitacao solicitacao = new Solicitacao();
+        solicitacao.setTitulo(dto.titulo());
+        solicitacao.setDescricao(dto.descricao());
+        solicitacao.setCategoria(categoria);
+        solicitacao.setUsuario(usuario);
+        solicitacao.setStatus(StatusSolicitacao.ABERTO);
+
+        Solicitacao salva = solicitacaoRepository.save(solicitacao);
+        return SolicitacaoResponseDTO.fromEntity(salva);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<SolicitacaoResponseDTO> buscarComFiltros(
+            String titulo,
+            Long categoriaId,
+            StatusSolicitacao status,
+            LocalDate dataInicio,
+            LocalDate dataFim,
+            Pageable pageable) {
+
+        LocalDateTime inicio = (dataInicio != null) ? dataInicio.atStartOfDay() : null;
+        LocalDateTime fim = (dataFim != null) ? dataFim.atTime(LocalTime.MAX) : null;
+
+        return solicitacaoRepository
+                .buscarComFiltros(titulo, categoriaId, status, inicio, fim, pageable)
+                .map(SolicitacaoResponseDTO::fromEntity);
+    }
+
+    @Transactional (readOnly = true)
+    public SolicitacaoResponseDTO buscarPorId(Long id) {
+        Solicitacao solicitacao = solicitacaoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Solicitação não encontrada com o ID: " + id));
+        return SolicitacaoResponseDTO.fromEntity(solicitacao);
+    }
+
+    @Transactional
+    public SolicitacaoResponseDTO atualizarStatus(Long id, StatusSolicitacao novoStatus) {
+        Solicitacao solicitacao = solicitacaoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Solicitação não encontrada com o ID: " + id));
+
+        solicitacao.setStatus(novoStatus);
+        Solicitacao atualizada = solicitacaoRepository.save(solicitacao);
+        return SolicitacaoResponseDTO.fromEntity(atualizada);
+    }
+
+    @Transactional
+    public void deletar(Long id) {
+        Solicitacao solicitacao = solicitacaoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Solicitação não encontrada com o ID: " + id));
+
+        if (solicitacao.getStatus() != StatusSolicitacao.ABERTO) {
+            throw new IllegalStateException("Apenas solicitações com status ABERTA podem ser excluídas.");
+        }
+
+        solicitacaoRepository.delete(solicitacao);
+    }
+
+    @Transactional(readOnly = true)
+    public DashboardStatusDTO obterEstatisticasDashboard() {
+        long total = solicitacaoRepository.count();
+        long abertas = solicitacaoRepository.countByStatus(StatusSolicitacao.ABERTO);
+        long emAtendimento = solicitacaoRepository.countByStatus(StatusSolicitacao.EM_ATENDIMENTO);
+        long concluidas = solicitacaoRepository.countByStatus(StatusSolicitacao.CONCLUIDO);
+
+        return new DashboardStatusDTO(total, abertas, emAtendimento, concluidas);
+    }
+
+}
