@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/solicitacoes")
-@CrossOrigin(origins = "*")
 public class SolicitacaoController {
   private final SolicitacaoService solicitacaoService;
 
