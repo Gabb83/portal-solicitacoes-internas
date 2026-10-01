@@ -1,33 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CircleX, Funnel } from "lucide-react";
 import SolicitacoesTabela, { Solicitacao } from "@/components/gerenciamento-components/SolicitacoesTabela";
 import ModalConfirmaçãoDelete from "@/components/gerenciamento-components/ModalConfirmaçãoDelete";
+import { listarSolicitacoes } from "@/services/solicitacoes";
 
 export default function GerenciarSolicitações() {
 
-  const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([
-    {
-      id: "1",
-      codigo: "12345678",
-      titulo: "Cadeira",
-      solicitante: "João Oliveira",
-      categoria: "Infraestrutura",
-      dataAbertura: "21/09/2026",
-      status: "Aberto",
-    },
-    {
-      id: "2",
-      codigo: "87654321",
-      titulo: "Monitor 24'",
-      solicitante: "Maria Silva",
-      categoria: "TI",
-      dataAbertura: "21/09/2026",
-      status: "Concluído",
-    },
-  ]);
-
+  const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
+  
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [solicitacoesDeletar, setSolicitacoesDeletar] = useState<Solicitacao | null>(null);
 
@@ -38,11 +22,47 @@ export default function GerenciarSolicitações() {
 
   const handleConfirmarDeletar = () => {
     if(solicitacoesDeletar) {
-      setSolicitacoes((prev) => prev.filter((item) => item.id !== solicitacoesDeletar.id));
+      setSolicitacoes((prev) => prev.filter((item: any) => item.id !== solicitacoesDeletar.id));
       setModalOpen(false);
       setSolicitacoesDeletar(null);
     }
   }
+
+  useEffect(() => {
+  async function carregarSolicitacoes() {
+    try {
+      const resposta = await listarSolicitacoes();
+
+      const dadosFormatados: Solicitacao[] = resposta.content.map(
+        (solicitacao) => ({
+          id: String(solicitacao.id),
+          codigo: String(solicitacao.id).padStart(8, "0"),
+          titulo: solicitacao.titulo,
+          solicitante: solicitacao.usuarioNome,
+          categoria: solicitacao.categoriaNome,
+          dataAbertura: new Date(
+            solicitacao.dataCriacao
+          ).toLocaleDateString("pt-BR"),
+          status:
+            solicitacao.status === "ABERTO"
+              ? "Aberto"
+              : solicitacao.status === "EM_ATENDIMENTO"
+                ? "Em atendimento"
+                : "Concluído",
+        })
+      );
+
+      setSolicitacoes(dadosFormatados);
+    } catch (error) {
+      console.error(error);
+      setErro("Não foi possível carregar as solicitações.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  carregarSolicitacoes();
+}, []);
 
   return (
     <div className="bg-[#f9f9f9]">
