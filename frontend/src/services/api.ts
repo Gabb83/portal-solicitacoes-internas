@@ -14,5 +14,7 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
     throw new Error(`Erro na requisição [${response.status}]: ${errorBody}`);
   }
 
+  if(response.status === 204) return undefined as T; 
+
   return response.json();
 }

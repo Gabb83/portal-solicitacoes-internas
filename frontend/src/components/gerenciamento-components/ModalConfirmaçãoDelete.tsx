@@ -5,7 +5,7 @@ import { TriangleAlert } from "lucide-react";
 interface ModalConfirmaçãoDeleteProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
 }
 
 export default function ModalConfirmaçãoDelete({

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { CircleX, Funnel } from "lucide-react";
 import SolicitacoesTabela, { Solicitacao } from "@/components/gerenciamento-components/SolicitacoesTabela";
 import ModalConfirmaçãoDelete from "@/components/gerenciamento-components/ModalConfirmaçãoDelete";
-import { listarSolicitacoes } from "@/services/solicitacoes";
+import { listarSolicitacoes, deletarSolicitacao } from "@/services/solicitacoes";
 
 export default function GerenciarSolicitações() {
 
@@ -20,47 +20,69 @@ export default function GerenciarSolicitações() {
     setModalOpen(true);
   }
 
-  const handleConfirmarDeletar = () => {
-    if(solicitacoesDeletar) {
-      setSolicitacoes((prev) => prev.filter((item: any) => item.id !== solicitacoesDeletar.id));
-      setModalOpen(false);
-      setSolicitacoesDeletar(null);
-    }
+  const handleConfirmarDeletar = async () => {
+  if (!solicitacoesDeletar) return;
+
+  const id = solicitacoesDeletar.id;
+
+  console.log("ID selecionado:", id);
+
+  try {
+    await deletarSolicitacao(Number(id));
+
+    console.log("DELETE realizado!");
+
+    setSolicitacoes((prev) => {
+      console.log("Lista antes:", prev);
+
+      const novaLista = prev.filter((item) => item.id !== id);
+
+      console.log("Lista depois:", novaLista);
+
+      return novaLista;
+    });
+
+    setModalOpen(false);
+    setSolicitacoesDeletar(null);
+
+  } catch (error) {
+    console.error("Erro ao deletar solicitação:", error);
   }
+};
 
-  useEffect(() => {
-  async function carregarSolicitacoes() {
-    try {
-      const resposta = await listarSolicitacoes();
+  const carregarSolicitacoes = async () => {
+  try {
+    const resposta = await listarSolicitacoes();
 
-      const dadosFormatados: Solicitacao[] = resposta.content.map(
-        (solicitacao) => ({
-          id: String(solicitacao.id),
-          codigo: String(solicitacao.id).padStart(8, "0"),
-          titulo: solicitacao.titulo,
-          solicitante: solicitacao.usuarioNome,
-          categoria: solicitacao.categoriaNome,
-          dataAbertura: new Date(
-            solicitacao.dataCriacao
-          ).toLocaleDateString("pt-BR"),
-          status:
-            solicitacao.status === "ABERTO"
-              ? "Aberto"
-              : solicitacao.status === "EM_ATENDIMENTO"
-                ? "Em atendimento"
-                : "Concluído",
-        })
-      );
+    const dadosFormatados: Solicitacao[] = resposta.content.map(
+      (solicitacao) => ({
+        id: String(solicitacao.id),
+        codigo: String(solicitacao.id).padStart(8, "0"),
+        titulo: solicitacao.titulo,
+        solicitante: solicitacao.usuarioNome,
+        categoria: solicitacao.categoriaNome,
+        dataAbertura: new Date(
+          solicitacao.dataCriacao
+        ).toLocaleDateString("pt-BR"),
+        status:
+          solicitacao.status === "ABERTO"
+            ? "Aberto"
+            : solicitacao.status === "EM_ATENDIMENTO"
+              ? "Em atendimento"
+              : "Concluído",
+      })
+    );
 
-      setSolicitacoes(dadosFormatados);
-    } catch (error) {
-      console.error(error);
-      setErro("Não foi possível carregar as solicitações.");
-    } finally {
-      setLoading(false);
-    }
+    setSolicitacoes(dadosFormatados);
+  } catch (error) {
+    console.error(error);
+    setErro("Não foi possível carregar as solicitações.");
+  } finally {
+    setLoading(false);
   }
+};
 
+useEffect(() => {
   carregarSolicitacoes();
 }, []);
 
@@ -143,9 +165,9 @@ export default function GerenciarSolicitações() {
                 <option value="" disabled hidden>
                   Selecione um status...
                 </option>
-                <option value="TI">Aberto</option>
-                <option value="RH">Em atendimento</option>
-                <option value="COMPRAS">Concluído</option>
+                <option value="ABERTO">Aberto</option>
+                <option value="EM_ATENDIMENTO">Em atendimento</option>
+                <option value="CONCLUIDO">Concluído</option>
               </select>
             
               <div className="absolute right-3 pointer-events-none text-gray-500">
