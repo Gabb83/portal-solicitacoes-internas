@@ -7,13 +7,13 @@ import com.empresa.portal_solicitacoes.enums.*;
 import com.empresa.portal_solicitacoes.exceptions.*;
 
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,20 +50,68 @@ public class SolicitacaoService {
 
     @Transactional(readOnly = true)
     public Page<SolicitacaoResponseDTO> buscarComFiltros(
-            String titulo,
-            Long categoriaId,
-            StatusSolicitacao status,
-            LocalDate dataInicio,
-            LocalDate dataFim,
-            Pageable pageable) {
+        String titulo,
+        Long categoriaId,
+        StatusSolicitacao status,
+        LocalDate dataInicio,
+        LocalDate dataFim,
+        Pageable pageable) {
 
-        LocalDateTime inicio = (dataInicio != null) ? dataInicio.atStartOfDay() : null;
-        LocalDateTime fim = (dataFim != null) ? dataFim.atTime(LocalTime.MAX) : null;
+        Specification<Solicitacao> spec = (root, query, cb) -> null;
 
-        return solicitacaoRepository
-                .buscarComFiltros(titulo, categoriaId, status, inicio, fim, pageable)
-                .map(SolicitacaoResponseDTO::fromEntity);
+    if (titulo != null && !titulo.isBlank()) {
+        spec = spec.and((root, query, cb) ->
+                cb.like(
+                        cb.lower(root.get("titulo")),
+                        "%" + titulo.toLowerCase() + "%"
+                )
+        );
     }
+
+    if (categoriaId != null) {
+        spec = spec.and((root, query, cb) ->
+                cb.equal(
+                        root.get("categoria").get("id"),
+                        categoriaId
+                )
+        );
+    }
+
+    if (status != null) {
+        spec = spec.and((root, query, cb) ->
+                cb.equal(
+                        root.get("status"),
+                        status
+                )
+        );
+    }
+
+    if (dataInicio != null) {
+        LocalDateTime inicio = dataInicio.atStartOfDay();
+
+        spec = spec.and((root, query, cb) ->
+                cb.greaterThanOrEqualTo(
+                        root.get("dataCriacao"),
+                        inicio
+                )
+        );
+    }
+
+    if (dataFim != null) {
+        LocalDateTime fim = dataFim.atTime(LocalTime.MAX);
+
+        spec = spec.and((root, query, cb) ->
+                cb.lessThanOrEqualTo(
+                        root.get("dataCriacao"),
+                        fim
+                )
+        );
+    }
+
+    return solicitacaoRepository
+            .findAll(spec, pageable)
+            .map(SolicitacaoResponseDTO::fromEntity);
+}
 
     @Transactional (readOnly = true)
     public SolicitacaoResponseDTO buscarPorId(Long id) {

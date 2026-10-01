@@ -40,5 +40,4 @@ public class Usuario {
   protected void onCreate() {
     this.dataCriacao = LocalDateTime.now();
   }
-    
 }

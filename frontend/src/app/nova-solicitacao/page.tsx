@@ -1,6 +1,11 @@
 import { AtSign, Plus, Send } from "lucide-react";
+import { getCategorias } from "@/services/categorias";
+import { criarSolicitacao } from "@/actions/solicitacoes";
 
-export default function NovaSolicicao() {
+export default async function NovaSolicicao() {
+  const categorias = await getCategorias();
+  const dataHoje = new Date().toLocaleDateString("pt-BR");
+
   return (
     <div className="bg-[#f9f9f9]">
       <div className="max-w-4xl px-7 py-2">
@@ -14,7 +19,10 @@ export default function NovaSolicicao() {
         </div>
       </div>
 
-      <form className="bg-white grid border-none rounded-xl p-5 m-5 gap-4">
+      <form 
+        action={async (formData) => {"use server"; await criarSolicitacao(formData); }} 
+        className="bg-white grid border-none rounded-xl p-5 m-5 gap-4"
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg border border-gray-100 text-sm">
           <div>
             <span className="text-xs font-semibold uppercase text-gray-500 tracking-wider block">
@@ -26,7 +34,7 @@ export default function NovaSolicicao() {
             <span className="text-xs font-semibold uppercase text-gray-500 tracking-wider block">
               Data de Abertura
             </span>
-            <span className="font-medium text-gray-800">data</span>
+            <span className="font-medium text-gray-800">{dataHoje}</span>
           </div>
         </div>
 
@@ -38,6 +46,8 @@ export default function NovaSolicicao() {
             </label>
             <div className="relative flex items-center">
               <input 
+                name="titulo"
+                required
                 type="text"
                 placeholder="Digite o título..."
                 className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 focus:outline-none text-sm font-medium"
@@ -52,18 +62,22 @@ export default function NovaSolicicao() {
             </label>
             <div className="relative flex items-center">
               <select
+                name="categoriaId"
+                required
                 defaultValue=""
                 className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 focus:outline-none text-sm font-medium appearance-none cursor-pointer invalid:text-gray-400"
-                required
               >
                 <option value="" disabled hidden>
                   Selecione uma categoria...
                 </option>
-                <option value="TI">TI</option>
-                <option value="RH">RH</option>
-                <option value="COMPRAS">Compras</option>
-                <option value="FINANCEIRO">Financeiro</option>
-                <option value="INFRAESTRUTURA">Infraestrutura</option>
+                { categorias.map((categoria) => (
+                  <option
+                    key={categoria.id}
+                    value={categoria.id}
+                  > 
+                    {categoria.nome}
+                  </option>
+                ))}
               </select>
             
               <div className="absolute right-3 pointer-events-none text-gray-500">
@@ -87,11 +101,12 @@ export default function NovaSolicicao() {
             <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
               Descrição Detalhada <span className="text-red-500">*</span>
             </label>
-            <textarea 
+            <textarea
+              name="descricao" 
               rows={5}
               required
               placeholder="Descreva detalhadamente a sua solicitação ou problema..."
-              className="w-full resize:none px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 text-sm font-medium resize-y min-h-30 transition-all"
+              className="w-full resize-y px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 text-sm font-medium  min-h-30 transition-all"
             />
           </div>
         </div>
