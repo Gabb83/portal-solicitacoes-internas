@@ -8,6 +8,7 @@ import com.empresa.portal_solicitacoes.dtos.SolicitacaoRequestDTO;
 import com.empresa.portal_solicitacoes.services.SolicitacaoService;
 import com.empresa.portal_solicitacoes.enums.StatusSolicitacao;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -32,7 +33,7 @@ public class SolicitacaoController {
             @RequestParam(required = false) StatusSolicitacao status,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
-            @PageableDefault(size = 10, sort = "dataCriacao") Pageable pageable) {
+            @PageableDefault(size = 10, sort = "dataCriacao", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<SolicitacaoResponseDTO> resultado = solicitacaoService
                 .buscarComFiltros(titulo, categoriaId, status, dataInicio, dataFim, pageable);
