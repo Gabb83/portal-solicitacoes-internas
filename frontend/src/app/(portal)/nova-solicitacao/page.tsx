@@ -1,11 +1,26 @@
 import { Plus } from "lucide-react";
 import { getCategorias } from "@/services/categorias";
 import { criarSolicitacao } from "@/actions/solicitacoes";
+import { cookies } from "next/headers";
+import { buscarUsuarioId } from "@/services/usuarios";
 
 export default async function NovaSolicicao() {
   const categorias = await getCategorias();
-  const dataHoje = new Date().toLocaleDateString("pt-BR");
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  if (!token) {
+    return null;
+  }
+
+  const usuarioId = Number(
+    token.replace("session-token-", "")
+  );
+  
+  const usuario = await buscarUsuarioId(usuarioId);
+  const dataHoje = new Date().toLocaleDateString("pt-BR");
+  
   return (
     <div className="bg-[#f9f9f9]">
       <div className="max-w-4xl px-7 py-2">
@@ -20,7 +35,7 @@ export default async function NovaSolicicao() {
       </div>
 
       <form 
-        action={async (formData) => {"use server"; await criarSolicitacao(formData); }} 
+        action={criarSolicitacao}
         className="bg-white grid border-none rounded-xl p-5 m-5 gap-4"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg border border-gray-100 text-sm">
@@ -28,7 +43,7 @@ export default async function NovaSolicicao() {
             <span className="text-xs font-semibold uppercase text-gray-500 tracking-wider block">
               Solicitante
             </span>
-            <span className="font-medium text-gray-800">user</span>
+            <span className="font-medium text-gray-800">{usuario.nome}</span>
           </div>
           <div>
             <span className="text-xs font-semibold uppercase text-gray-500 tracking-wider block">

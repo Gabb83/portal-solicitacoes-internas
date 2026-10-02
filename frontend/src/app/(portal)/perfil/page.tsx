@@ -13,20 +13,29 @@ export default function Perfil() {
   useEffect(() => {
     async function carregarPerfil() {
       try {
-
         setLoading(true);
         setErro(null);
 
-        const resposta = await buscarUsuarioId(1); 
-        setUsuario(resposta);
+        const usuarioSalvo = localStorage.getItem("usuario");
 
-      } catch(error) {
+        if (!usuarioSalvo) {
+          setErro("Usuário não autenticado.");
+          return;
+        }
+
+        const usuarioLogado = JSON.parse(usuarioSalvo);
+
+        const resposta = await buscarUsuarioId(usuarioLogado.id);
+
+        setUsuario(resposta);
+      } catch (error) {
         console.error("Erro ao carregar o perfil: ", error);
         setErro("Não foi possível carregar os dados do perfil");
       } finally {
         setLoading(false);
       }
     }
+
     carregarPerfil();
   }, []);
 
@@ -46,7 +55,8 @@ export default function Perfil() {
       <div className="bg-[#ffffff] border-none rounded-t-2xl">
         <div className="bg-linear-to-r from-[#176b45] to-[#209460] border-none rounded-t-2xl h-32 relative">
           <div className="-bottom-10 left-8 relative inline-block">
-            <div className="w-24 h-24 bg-[#176b45] rounded-full border-4 border-white flex items-center justify-center text-white text-3xl font-bold shadow-md">{usuario?.nome.charAt(0).toUpperCase()}</div>
+            <div className="w-24 h-24 bg-[#176b45] rounded-full border-4 border-white flex items-center justify-center text-white text-3xl font-bold shadow-md">{usuario?.nome
+  ? usuario.nome.charAt(0).toUpperCase(): "?"}</div>
             <button className="absolute bottom-0 right-0 bg-white p-1.5 rounded-full shadow border border-gray-200 text-gray-600 hover:bg-gray-50">
               <Camera size={14} />
             </button>
