@@ -1,10 +1,45 @@
 "use client";
 
-import { ShieldLock, Lock, EyeOff, Eye } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import type { FormEvent } from "react";
+import { ShieldLock, Lock, EyeOff, Eye } from "lucide-react";
+import { login } from "@/services/auth";
 
 export default function Login() {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null); 
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    try {
+      setLoading(true);
+      setErro(null);
+
+      const resposta = await login({
+        email, senha,
+      });
+
+      console.log("Login realizado:", resposta);
+      localStorage.setItem("usuario", JSON.stringify(resposta));
+      document.cookie = `token=${resposta.token}; path=/;`;
+
+      router.push("/");
+
+    } catch(error) {
+      console.error("Erro ao realizar login:", error);
+      setErro("E-mail ou senha inválidos.");
+
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div>
@@ -25,20 +60,22 @@ export default function Login() {
                 Acesse ao Portal de Solicitações Internas
               </p>
 
-              <form className="flex flex-col gap-5 mt-5">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-5 mt-5">
                 <div className="relative w-full">
                   <input
                     type="text"
-                    id="username"
+                    id="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)} 
                     className="peer w-full rounded-lg border border-gray-300 bg-transparent px-4 py-3 text-gray-900 placeholder-transparent outline-none transition-all focus:border-[#176b45]"
-                    placeholder="Usuário"
+                    placeholder="E-mail"
                     required
                   />
                   <label
-                    htmlFor="username"
+                    htmlFor="email"
                     className="absolute left-3 -top-2.5 px-1 text-sm text-gray-500 transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:left-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2.5 peer-focus:left-3 peer-focus:text-sm peer-focus:text-[#176b45] cursor-text"
                   >
-                    Usuário
+                    E-mail
                   </label>
                 </div>
 
@@ -46,6 +83,8 @@ export default function Login() {
                   <input
                     type={showPassword ? "text" : "password"}
                     id="password"
+                    value={senha}
+                    onChange={(event) => setSenha(event.target.value)}
                     className="peer w-full rounded-lg border border-gray-300 bg-transparent pl-4 pr-11 py-3 text-gray-900 placeholder-transparent outline-none transition-all focus:border-[#176b45]"
                     placeholder="Senha"
                     required
@@ -60,7 +99,11 @@ export default function Login() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
-                    aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                    aria-label={
+                      showPassword
+                        ? "Ocultar senha"
+                        : "Mostrar senha"
+                    }
                   >
                     {showPassword ? (
                       <EyeOff className="h-5 w-5" />
@@ -70,11 +113,18 @@ export default function Login() {
                   </button>
                 </div>
 
+                {erro && (
+                  <p className="text-sm text-red-500 text-left">
+                    {erro}
+                  </p>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full bg-[#176b45] hover:bg-[#125436] text-white font-bold rounded-lg py-3 cursor-pointer transition-colors"
+                  disabled={loading}
+                  className="w-full bg-[#176b45] hover:bg-[#125436] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold rounded-lg py-3 cursor-pointer transition-colors"
                 >
-                  Entrar
+                  {loading ? "Entrando..." : "Entrar"}
                 </button>
               </form>
 
