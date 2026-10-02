@@ -1,4 +1,4 @@
-import { AtSign, Plus, Send } from "lucide-react";
+import { Plus } from "lucide-react";
 import { getCategorias } from "@/services/categorias";
 import { criarSolicitacao } from "@/actions/solicitacoes";
 

@@ -52,4 +52,14 @@ public class UsuarioService {
 
     return UsuarioResponseDTO.fromEntity(usuario);
   } 
+
+  @Transactional
+    public void deletar(Long id) {
+      Usuario usuario = usuarioRepository.findById(id)
+              .orElseThrow(() -> new ResourceNotFoundException(
+                      "Usuário não encontrado com o ID: " + id
+              ));
+
+      usuarioRepository.delete(usuario);
+    }
 }

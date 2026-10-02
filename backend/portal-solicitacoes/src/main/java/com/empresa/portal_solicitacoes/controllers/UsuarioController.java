@@ -3,6 +3,7 @@ package com.empresa.portal_solicitacoes.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,5 +29,11 @@ public class UsuarioController {
   @GetMapping("/{id}")
   public ResponseEntity<UsuarioResponseDTO> buscarId(@PathVariable Long id) {
     return ResponseEntity.ok(usuarioService.buscarId(id));
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    usuarioService.deletar(id);
+    return ResponseEntity.noContent().build();
   }
 }

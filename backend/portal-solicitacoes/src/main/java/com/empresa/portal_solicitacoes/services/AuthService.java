@@ -27,8 +27,8 @@ public class AuthService {
 
       return new LoginResponseDTO(
         usuario.getId(),
-        usuario.getNome(),
         usuario.getEmail(),
+        usuario.getNome(),
         "session-token-" + usuario.getId()
       );
   }
