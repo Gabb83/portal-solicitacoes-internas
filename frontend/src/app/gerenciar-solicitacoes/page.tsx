@@ -2,29 +2,61 @@
 
 import { useState, useEffect } from "react";
 import { CircleX, Funnel } from "lucide-react";
+
+import type { ISolicitacaoApi } from "@/types/solicitacao";
+import { listarSolicitacoes, buscarSolicitacaoId, deletarSolicitacao } from "@/services/solicitacoes";
+
 import SolicitacoesTabela, { Solicitacao } from "@/components/gerenciamento-components/SolicitacoesTabela";
-import ModalConfirmaçãoDelete from "@/components/gerenciamento-components/ModalConfirmaçãoDelete";
-import { listarSolicitacoes, deletarSolicitacao } from "@/services/solicitacoes";
+import ModalConfirmaçãoDelete from "@/components/gerenciamento-components/ModalConfirmacaoDelete";
+import ModalVisualizarSolicitacao from "@/components/gerenciamento-components/ModalVisualizacao";
 
 export default function GerenciarSolicitações() {
 
   const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([]);
+  const [solicitacaoVisualizar, setSolicitacaoVisualizar] = useState<ISolicitacaoApi | null>(null);
+  
+  const [loadingVisualizar, setLoadingVisualizar] = useState(false);
+  const [erroVisualizar, setErroVisualizar] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [solicitacoesDeletar, setSolicitacoesDeletar] = useState<Solicitacao | null>(null);
+  const [modalVisualizarOpen, setModalVisualizarOpen] = useState(false);
 
   const handleAbrirModalDelete = (solicitacao: Solicitacao) => {
     setSolicitacoesDeletar(solicitacao);
     setModalOpen(true);
   }
 
+  const handleAbrirModalVisualizar = async (
+    solicitacao: Solicitacao
+  ) => {
+    setModalVisualizarOpen(true);
+    setLoadingVisualizar(true);
+    setErroVisualizar(null);
+    setSolicitacaoVisualizar(null);
+
+    try {
+      const resposta = await buscarSolicitacaoId(
+        Number(solicitacao.id)
+      );
+
+      setSolicitacaoVisualizar(resposta);
+    } catch(error) {
+      console.error("Erro ao buscar solicitação:", error);
+      setErroVisualizar(
+        "Não foi possível carregar os detalhes da solicitação."
+      );
+    } finally {
+      setLoadingVisualizar(false);
+    }
+  };
+
   const handleConfirmarDeletar = async () => {
-  if (!solicitacoesDeletar) return;
+  if(!solicitacoesDeletar) return;
 
   const id = solicitacoesDeletar.id;
-
   console.log("ID selecionado:", id);
 
   try {
@@ -34,57 +66,54 @@ export default function GerenciarSolicitações() {
 
     setSolicitacoes((prev) => {
       console.log("Lista antes:", prev);
-
       const novaLista = prev.filter((item) => item.id !== id);
 
       console.log("Lista depois:", novaLista);
-
       return novaLista;
     });
 
     setModalOpen(false);
     setSolicitacoesDeletar(null);
-
   } catch (error) {
     console.error("Erro ao deletar solicitação:", error);
   }
 };
 
   const carregarSolicitacoes = async () => {
-  try {
-    const resposta = await listarSolicitacoes();
+    try {
+      const resposta = await listarSolicitacoes();
 
-    const dadosFormatados: Solicitacao[] = resposta.content.map(
-      (solicitacao) => ({
-        id: String(solicitacao.id),
-        codigo: String(solicitacao.id).padStart(8, "0"),
-        titulo: solicitacao.titulo,
-        solicitante: solicitacao.usuarioNome,
-        categoria: solicitacao.categoriaNome,
-        dataAbertura: new Date(
-          solicitacao.dataCriacao
-        ).toLocaleDateString("pt-BR"),
-        status:
-          solicitacao.status === "ABERTO"
-            ? "Aberto"
-            : solicitacao.status === "EM_ATENDIMENTO"
-              ? "Em atendimento"
-              : "Concluído",
-      })
-    );
+      const dadosFormatados: Solicitacao[] = resposta.content.map(
+        (solicitacao) => ({
+          id: String(solicitacao.id),
+          codigo: String(solicitacao.id).padStart(8, "0"),
+          titulo: solicitacao.titulo,
+          solicitante: solicitacao.usuarioNome,
+          categoria: solicitacao.categoriaNome,
+          dataAbertura: new Date(
+            solicitacao.dataCriacao
+          ).toLocaleDateString("pt-BR"),
+          status:
+            solicitacao.status === "ABERTO"
+              ? "Aberto"
+              : solicitacao.status === "EM_ATENDIMENTO"
+                ? "Em atendimento"
+                : "Concluído",
+        })
+      );
 
-    setSolicitacoes(dadosFormatados);
-  } catch (error) {
-    console.error(error);
-    setErro("Não foi possível carregar as solicitações.");
-  } finally {
-    setLoading(false);
-  }
-};
+      setSolicitacoes(dadosFormatados);
+    } catch(error) {
+      console.error(error);
+      setErro("Não foi possível carregar as solicitações.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-useEffect(() => {
-  carregarSolicitacoes();
-}, []);
+  useEffect(() => {
+    carregarSolicitacoes();
+  }, []);
 
   return (
     <div className="bg-[#f9f9f9]">
@@ -133,7 +162,6 @@ useEffect(() => {
                 <option value="FINANCEIRO">Financeiro</option>
                 <option value="INFRAESTRUTURA">Infraestrutura</option>
               </select>
-            
               <div className="absolute right-3 pointer-events-none text-gray-500">
                 <svg
                   className="w-4 h-4"
@@ -169,7 +197,6 @@ useEffect(() => {
                 <option value="EM_ATENDIMENTO">Em atendimento</option>
                 <option value="CONCLUIDO">Concluído</option>
               </select>
-            
               <div className="absolute right-3 pointer-events-none text-gray-500">
                 <svg
                   className="w-4 h-4"
@@ -223,7 +250,8 @@ useEffect(() => {
 
         <SolicitacoesTabela
           dados={solicitacoes}
-          onDeletar={handleAbrirModalDelete} 
+          onVisualizar={handleAbrirModalVisualizar}
+          onDeletar={handleAbrirModalDelete}
         />
       </section>
 
@@ -231,6 +259,18 @@ useEffect(() => {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onConfirm={handleConfirmarDeletar}
+      />
+
+      <ModalVisualizarSolicitacao
+        isOpen={modalVisualizarOpen}
+        solicitacoes={solicitacaoVisualizar}
+        loading={loadingVisualizar}
+        error={erroVisualizar}
+        onClose={() => {
+          setModalVisualizarOpen(false)
+          setSolicitacaoVisualizar(null);
+          setErroVisualizar(null);
+        }}
       />
     </div>
   );

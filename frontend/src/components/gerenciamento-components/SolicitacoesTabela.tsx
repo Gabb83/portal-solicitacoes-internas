@@ -54,7 +54,7 @@ export default function SolicitacoesTabela({
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-2 text-gray-500">
                     <button 
-                      onClick={() => (solicitacao)}
+                      onClick={() => onVisualizar?.(solicitacao)}
                       title="Visualizar"
                       className="rounded p-1.5 hover:bg-emerald-100 hover:text-emerald-700 transition-colors cursor-pointer" 
                     >
