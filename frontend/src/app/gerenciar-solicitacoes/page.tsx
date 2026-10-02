@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react";
 import { CircleX, Funnel } from "lucide-react";
 
-import type { ISolicitacaoApi } from "@/types/solicitacao";
-import { listarSolicitacoes, buscarSolicitacaoId, deletarSolicitacao } from "@/services/solicitacoes";
+import type { ISolicitacaoApi, ISolicitacaoUpdate } from "@/types/solicitacao";
+import { listarSolicitacoes, buscarSolicitacaoId, atualizarSolicitacaoId, deletarSolicitacao } from "@/services/solicitacoes";
 
 import SolicitacoesTabela, { Solicitacao } from "@/components/gerenciamento-components/SolicitacoesTabela";
 import ModalConfirmaçãoDelete from "@/components/gerenciamento-components/ModalConfirmacaoDelete";
 import ModalVisualizarSolicitacao from "@/components/gerenciamento-components/ModalVisualizacao";
+import ModalAtualizacaoSolicitacao from "@/components/gerenciamento-components/ModalAtualizacao";
 
 export default function GerenciarSolicitações() {
 
@@ -24,10 +25,99 @@ export default function GerenciarSolicitações() {
   const [solicitacoesDeletar, setSolicitacoesDeletar] = useState<Solicitacao | null>(null);
   const [modalVisualizarOpen, setModalVisualizarOpen] = useState(false);
 
+  const [modalEditarOpen, setModalEditarOpen] = useState(false);
+
+  const [solicitacaoEditar, setSolicitacaoEditar] =
+    useState<ISolicitacaoApi | null>(null);
+  const [loadingEditar, setLoadingEditar] = useState(false);
+  const [savingEditar, setSavingEditar] = useState(false);
+  const [erroEditar, setErroEditar] = useState<string | null>(null);
+
   const handleAbrirModalDelete = (solicitacao: Solicitacao) => {
     setSolicitacoesDeletar(solicitacao);
     setModalOpen(true);
   }
+
+  const handleAbrirModalEditar = async (
+  solicitacao: Solicitacao
+) => {
+  setModalEditarOpen(true);
+  setLoadingEditar(true);
+  setErroEditar(null);
+  setSolicitacaoEditar(null);
+
+  try {
+    const resposta = await buscarSolicitacaoId(
+      Number(solicitacao.id)
+    );
+
+    setSolicitacaoEditar(resposta);
+  } catch (error) {
+    console.error(
+      "Erro ao buscar solicitação para edição:",
+      error
+    );
+
+    setErroEditar(
+      "Não foi possível carregar os dados da solicitação."
+    );
+  } finally {
+    setLoadingEditar(false);
+  }
+};
+
+const handleSalvarEdicao = async (
+  dados: ISolicitacaoUpdate
+) => {
+  if (!solicitacaoEditar) return;
+
+  setSavingEditar(true);
+  setErroEditar(null);
+
+  try {
+    const resposta = await atualizarSolicitacaoId(
+      solicitacaoEditar.id,
+      dados
+    );
+
+    console.log("Solicitação atualizada:", resposta);
+
+    setSolicitacoes((prev) =>
+      prev.map((item) => {
+        if (item.id !== String(resposta.id)) {
+          return item;
+        }
+
+        return {
+          ...item,
+          titulo: resposta.titulo,
+          categoria: resposta.categoriaNome,
+          status:
+            resposta.status === "ABERTO"
+              ? "Aberto"
+              : resposta.status === "EM_ATENDIMENTO"
+                ? "Em atendimento"
+                : "Concluído",
+        };
+      })
+    );
+
+    setModalEditarOpen(false);
+    setSolicitacaoEditar(null);
+
+  } catch (error) {
+    console.error(
+      "Erro ao atualizar solicitação:",
+      error
+    );
+
+    setErroEditar(
+      "Não foi possível atualizar a solicitação."
+    );
+  } finally {
+    setSavingEditar(false);
+  }
+};
 
   const handleAbrirModalVisualizar = async (
     solicitacao: Solicitacao
@@ -251,6 +341,7 @@ export default function GerenciarSolicitações() {
         <SolicitacoesTabela
           dados={solicitacoes}
           onVisualizar={handleAbrirModalVisualizar}
+          onEditar={handleAbrirModalEditar}
           onDeletar={handleAbrirModalDelete}
         />
       </section>
@@ -272,6 +363,22 @@ export default function GerenciarSolicitações() {
           setErroVisualizar(null);
         }}
       />
+<ModalAtualizacaoSolicitacao
+  isOpen={modalEditarOpen}
+  solicitacao={solicitacaoEditar}
+  loading={loadingEditar}
+  saving={savingEditar}
+  error={erroEditar}
+  onClose={() => {
+    if (savingEditar) return;
+
+    setModalEditarOpen(false);
+    setSolicitacaoEditar(null);
+    setErroEditar(null);
+  }}
+  onSave={handleSalvarEdicao}
+/>
+      
     </div>
   );
 }

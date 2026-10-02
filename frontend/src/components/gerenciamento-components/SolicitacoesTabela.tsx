@@ -61,7 +61,7 @@ export default function SolicitacoesTabela({
                       <Eye className="h-4 w-4" />
                     </button>
                     <button 
-                      onClick={() => (solicitacao)}
+                      onClick={() => onEditar?.(solicitacao)}
                       title="Editar"
                       className="rounded p-1.5 hover:bg-emerald-100 hover:text-emerald-700 transition-colors cursor-pointer"
                     >

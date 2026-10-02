@@ -11,6 +11,13 @@ export interface ISolicitacaoApi {
   dataAtualizacao: string;
 }
 
+export interface ISolicitacaoUpdate {
+  titulo: string;
+  descricao: string;
+  categoriaId: number;
+  status: "ABERTO" | "EM_ATENDIMENTO" | "CONCLUIDO";
+}
+
 export interface IPaginaSolicitacoes {
   content: ISolicitacaoApi[];
   totalElements: number;

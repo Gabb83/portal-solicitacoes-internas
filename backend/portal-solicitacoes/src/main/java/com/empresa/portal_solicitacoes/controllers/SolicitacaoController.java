@@ -1,11 +1,14 @@
 package com.empresa.portal_solicitacoes.controllers;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 import com.empresa.portal_solicitacoes.dtos.SolicitacaoResponseDTO;
+import com.empresa.portal_solicitacoes.dtos.SolicitacaoUpdateDTO;
 import com.empresa.portal_solicitacoes.dtos.SolicitacaoRequestDTO;
 import com.empresa.portal_solicitacoes.services.SolicitacaoService;
+
+import jakarta.validation.Valid;
+
 import com.empresa.portal_solicitacoes.enums.StatusSolicitacao;
 
 import org.springframework.data.domain.Sort;
@@ -51,15 +54,15 @@ public class SolicitacaoController {
       return ResponseEntity.ok(solicitacaoService.buscarPorId(id));
   }
 
-  @PatchMapping("/{id}/status")
-  public ResponseEntity<SolicitacaoResponseDTO> atualizarStatus(
-          @PathVariable Long id,
-          @RequestBody Map<String, String> body) {
-      
-      StatusSolicitacao novoStatus = StatusSolicitacao.valueOf(body.get("status").toUpperCase());
-      SolicitacaoResponseDTO atualizada = solicitacaoService.atualizarStatus(id, novoStatus);
-      return ResponseEntity.ok(atualizada);
-  }
+  @PutMapping("/{id}")
+    public ResponseEntity<SolicitacaoResponseDTO> atualizar(
+            @PathVariable Long id,
+            @RequestBody @Valid SolicitacaoUpdateDTO dto) {
+
+        return ResponseEntity.ok(
+            solicitacaoService.atualizar(id, dto)
+        );
+    }
 
   // 5. Rota DELETE
   @DeleteMapping("/{id}")

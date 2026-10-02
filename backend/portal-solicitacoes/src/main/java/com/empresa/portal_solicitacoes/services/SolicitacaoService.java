@@ -130,17 +130,46 @@ public class SolicitacaoService {
         return SolicitacaoResponseDTO.fromEntity(atualizada);
     }
 
-    @Transactional
-    public void deletar(Long id) {
+  
+        @Transactional
+        public SolicitacaoResponseDTO atualizar(Long id, SolicitacaoUpdateDTO dto) {
         Solicitacao solicitacao = solicitacaoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Solicitação não encontrada com o ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Solicitação não encontrada com o ID: " + id));
 
-        if (solicitacao.getStatus() != StatusSolicitacao.ABERTO) {
-            throw new IllegalStateException("Apenas solicitações com status ABERTA podem ser excluídas.");
+        Categoria categoria = categoriaRepository.findById(dto.categoriaId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Categoria não encontrada com o ID: " + dto.categoriaId()));
+
+        solicitacao.setTitulo(dto.titulo());
+        solicitacao.setDescricao(dto.descricao());
+        solicitacao.setStatus(dto.status());
+        solicitacao.setCategoria(categoria);
+
+        Solicitacao atualizada = solicitacaoRepository.save(solicitacao);
+
+        return SolicitacaoResponseDTO.fromEntity(atualizada);
         }
 
-        solicitacaoRepository.delete(solicitacao);
+
+    @Transactional
+public void deletar(Long id) {
+
+    Solicitacao solicitacao = solicitacaoRepository.findById(id)
+            .orElseThrow(() ->
+                new ResourceNotFoundException(
+                    "Solicitação não encontrada com o ID: " + id
+                )
+            );
+
+    if (solicitacao.getStatus() != StatusSolicitacao.ABERTO) {
+        throw new RegraNegocioException(
+            "Apenas solicitações com status ABERTO podem ser excluídas."
+        );
     }
+
+    solicitacaoRepository.delete(solicitacao);
+}
 
     @Transactional(readOnly = true)
     public DashboardStatusDTO obterEstatisticasDashboard() {
