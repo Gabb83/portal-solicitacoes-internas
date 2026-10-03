@@ -219,7 +219,7 @@ const handleSalvarEdicao = async (
       </div>
 
       <section className="bg-white border-none rounded-xl p-5 mx-5 mt-2">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
               Título
@@ -318,7 +318,7 @@ const handleSalvarEdicao = async (
             </div>
           </div>
         </div>
-        <div className="flex flex-row justify-end items-center gap-3 mt-5">
+        <div className="flex flex-row justify-center sm:justify-end items-center gap-3 mt-5">
           <button
             type="button"
             className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-red-500 hover:text-white transition-colors duration-500 cursor-pointer"

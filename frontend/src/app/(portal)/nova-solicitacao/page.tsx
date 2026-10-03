@@ -1,12 +1,12 @@
+import { cookies } from "next/headers";
 import { Plus } from "lucide-react";
+
 import { getCategorias } from "@/services/categorias";
 import { criarSolicitacao } from "@/actions/solicitacoes";
-import { cookies } from "next/headers";
 import { buscarUsuarioId } from "@/services/usuarios";
 
 export default async function NovaSolicicao() {
   const categorias = await getCategorias();
-
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
@@ -38,7 +38,7 @@ export default async function NovaSolicicao() {
         action={criarSolicitacao}
         className="bg-white grid border-none rounded-xl p-5 m-5 gap-4"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg border border-gray-100 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg border border-gray-100 text-sm">
           <div>
             <span className="text-xs font-semibold uppercase text-gray-500 tracking-wider block">
               Solicitante
@@ -53,7 +53,7 @@ export default async function NovaSolicicao() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
               Título
@@ -126,17 +126,17 @@ export default async function NovaSolicicao() {
           </div>
         </div>
         
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4 border-t border-gray-100">
           <button
             type="button"
-            className="px-5 py-2.5 rounded-lg border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-red-500 hover:text-white transition-colors duration-500 cursor-pointer"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-red-500 hover:text-white transition-colors duration-500 cursor-pointer"
           >
             Cancelar
           </button>
-          
+
           <button
             type="submit"
-            className="flex items-center gap-2 bg-[#176b45] hover:bg-[#125436] text-white font-semibold text-sm rounded-lg px-6 py-2.5 cursor-pointer transition-colors duration-500 shadow-sm"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#176b45] hover:bg-[#125436] text-white font-semibold text-sm rounded-lg px-6 py-2.5 cursor-pointer transition-colors duration-500 shadow-sm"
           >
             <Plus className="w-4 h-4" />
             Criar Solicitação

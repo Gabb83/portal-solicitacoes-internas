@@ -50,83 +50,136 @@ export default function Perfil() {
   }
 
   return (
-    <div className="bg-[#f9f9f9] flex flex-col items-center justify-cente px-10">
-      <div className="w-full bg-[#f8f8f8] border-none rounded-2xl p-5 m-10">
-      <div className="bg-[#ffffff] border-none rounded-t-2xl">
-        <div className="bg-linear-to-r from-[#176b45] to-[#209460] border-none rounded-t-2xl h-32 relative">
-          <div className="-bottom-10 left-8 relative inline-block">
-            <div className="w-24 h-24 bg-[#176b45] rounded-full border-4 border-white flex items-center justify-center text-white text-3xl font-bold shadow-md">{usuario?.nome
-  ? usuario.nome.charAt(0).toUpperCase(): "?"}</div>
-            <button className="absolute bottom-0 right-0 bg-white p-1.5 rounded-full shadow border border-gray-200 text-gray-600 hover:bg-gray-50">
-              <Camera size={14} />
-            </button>
+    <div className="min-h-full bg-[#f9f9f9] px-3 py-4 sm:px-5 sm:py-6 lg:px-8">
+      <div className="mx-auto w-full max-w-5xl rounded-2xl bg-[#f8f8f8] p-2 sm:p-4 lg:p-5">
+        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+          {/* Banner */}
+          <div className="relative h-24 sm:h-32 bg-linear-to-r from-[#176b45] to-[#209460]">
+
+            {/* Avatar */}
+            <div className="absolute left-4 top-14 sm:left-8 sm:top-20">
+              <div className="relative">
+                <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-[#176b45] text-2xl font-bold text-white shadow-md sm:h-24 sm:w-24 sm:text-3xl">
+                  {usuario?.nome
+                    ? usuario.nome.charAt(0).toUpperCase()
+                    : "?"}
+                </div>
+
+                <button
+                  type="button"
+                  className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow hover:bg-gray-50"
+                >
+                  <Camera size={14} />
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"></div>
 
-        <div className="p-3">
-          <h2 className="text-xl font-bold text-gray-800">Meu Perfil</h2>
-          <p className="text-sm text-gray-500">Gerencie suas informações pessoais</p>
-        
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Nome Completo
-              </label>
-              <div className="relative flex items-center">
-                <User size={18} className="absolute left-3 text-gray-400" />
-                <input 
-                  type="text" 
-                  value={usuario?.nome ?? ""}
-                  readOnly 
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 focus:outline-none text-sm font-medium"
-                />
-              </div>
+          {/* Conteúdo */}
+          <div className="px-4 pb-5 pt-14 sm:px-6 sm:pb-7 sm:pt-16 lg:px-8">
+
+            {/* Título */}
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-gray-800">
+                Meu Perfil
+              </h2>
+
+              <p className="mt-1 text-sm text-gray-500">
+                Gerencie suas informações pessoais
+              </p>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                E-mail
-              </label>
-              <div className="relative flex items-center">
-                <AtSign size={18} className="absolute left-3 text-gray-400" />
-                <input 
-                  type="text" 
-                  value={usuario?.email ?? ""}
-                  readOnly 
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 focus:outline-none text-sm font-medium"
-                />
+            {/* Informações */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+              {/* Nome */}
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
+                  Nome Completo
+                </label>
+
+                <div className="relative flex min-w-0 items-center">
+                  <User
+                    size={18}
+                    className="absolute left-3 shrink-0 text-gray-400"
+                  />
+
+                  <input
+                    type="text"
+                    value={usuario?.nome ?? ""}
+                    readOnly
+                    className="min-w-0 w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-3 text-sm font-medium text-gray-800 outline-none"
+                  />
+                </div>
               </div>
-            </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+
+              {/* E-mail */}
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
+                  E-mail
+                </label>
+
+                <div className="relative flex min-w-0 items-center">
+                  <AtSign
+                    size={18}
+                    className="absolute left-3 shrink-0 text-gray-400"
+                  />
+
+                  <input
+                    type="text"
+                    value={usuario?.email ?? ""}
+                    readOnly
+                    className="min-w-0 w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-3 text-sm font-medium text-gray-800 outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* ID */}
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
                   ID da Conta
                 </label>
-                <div className="relative flex items-center">
-                  <Hash size={18} className="absolute left-3 text-gray-400" />
-                  <input 
-                    type="text" 
-                    value={usuario?.id?.toString() ?? ""} 
-                    readOnly 
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 focus:outline-none text-sm font-mono"
+
+                <div className="relative flex min-w-0 items-center">
+                  <Hash
+                    size={18}
+                    className="absolute left-3 shrink-0 text-gray-400"
+                  />
+
+                  <input
+                    type="text"
+                    value={usuario?.id?.toString() ?? ""}
+                    readOnly
+                    className="min-w-0 w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-3 text-sm font-mono text-gray-800 outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              {/* Membro desde */}
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
                   Membro desde
                 </label>
-                <div className="relative flex items-center">
-                  <Calendar size={18} className="absolute left-3 text-gray-400" />
-                  <input 
-                    type="text" 
-                    value={usuario ? formatarData(usuario.dataCriacao) : ""}
-                    readOnly 
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 focus:outline-none text-sm font-medium"
+
+                <div className="relative flex min-w-0 items-center">
+                  <Calendar
+                    size={18}
+                    className="absolute left-3 shrink-0 text-gray-400"
+                  />
+
+                  <input
+                    type="text"
+                    value={
+                      usuario
+                        ? formatarData(usuario.dataCriacao)
+                        : ""
+                    }
+                    readOnly
+                    className="min-w-0 w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-3 text-sm font-medium text-gray-800 outline-none"
                   />
                 </div>
               </div>
+
             </div>
           </div>
         </div>
