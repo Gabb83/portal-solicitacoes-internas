@@ -24,7 +24,7 @@ export default function SideMenu({
   return (
     <>
       <div
-        className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 md:hidden ${aberto ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        className={`fixed cursor-pointer inset-0 z-40 bg-black/40 transition-opacity duration-300 md:hidden ${aberto ? "opacity-100" : "pointer-events-none opacity-0"}`}
         onClick={onFechar}
       />
 

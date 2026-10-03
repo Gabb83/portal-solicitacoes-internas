@@ -4,8 +4,7 @@ import { useState, useEffect } from "react";
 import { CircleX, Funnel } from "lucide-react";
 
 import type { ISolicitacaoApi, ISolicitacaoUpdate } from "@/types/solicitacao";
-import { listarSolicitacoes, buscarSolicitacaoId, atualizarSolicitacaoId, deletarSolicitacao } from "@/services/solicitacoes";
-import { listarSolicitacoesAction, buscarSolicitacaoAction, } from "@/actions/solicitacoes";
+import { listarSolicitacoesAction, buscarSolicitacaoAction, atualizarSolicitacaoAction, deletarSolicitacaoAction, } from "@/actions/solicitacoes";
 
 import SolicitacoesTabela, { Solicitacao } from "@/components/gerenciamento-components/SolicitacoesTabela";
 import ModalConfirmaçãoDelete from "@/components/gerenciamento-components/ModalConfirmacaoDelete";
@@ -27,11 +26,16 @@ export default function GerenciarSolicitações() {
 
   const [modalEditarOpen, setModalEditarOpen] = useState(false);
 
-  const [solicitacaoEditar, setSolicitacaoEditar] =
-    useState<ISolicitacaoApi | null>(null);
+  const [solicitacaoEditar, setSolicitacaoEditar] = useState<ISolicitacaoApi | null>(null);
   const [loadingEditar, setLoadingEditar] = useState(false);
   const [savingEditar, setSavingEditar] = useState(false);
   const [erroEditar, setErroEditar] = useState<string | null>(null);
+
+  const [filtroTitulo, setFiltroTitulo] = useState("");
+  const [filtroCategoria, setFiltroCategoria] = useState("");
+  const [filtroStatus, setFiltroStatus] = useState("");
+  const [filtroDataInicio, setFiltroDataInicio] = useState("");
+  const [filtroDataFim, setFiltroDataFim] = useState("");
 
   const handleAbrirModalDelete = (solicitacao: Solicitacao) => {
     setSolicitacoesDeletar(solicitacao);
@@ -75,7 +79,7 @@ export default function GerenciarSolicitações() {
     setErroEditar(null);
 
     try {
-      const resposta = await atualizarSolicitacaoId(
+      const resposta = await atualizarSolicitacaoAction(
         solicitacaoEditar.id,
         dados
       );
@@ -150,7 +154,7 @@ export default function GerenciarSolicitações() {
     console.log("ID selecionado:", id);
 
     try {
-      await deletarSolicitacao(Number(id));
+      await deletarSolicitacaoAction(Number(id));
 
       console.log("DELETE realizado!");
 
@@ -169,9 +173,19 @@ export default function GerenciarSolicitações() {
     }
   };
 
-  const carregarSolicitacoes = async () => {
+  const carregarSolicitacoes = async (
+    filtros?: {
+      titulo?: string;
+      categoriaId?: number;
+      status?: string;
+      dataInicio?: string;
+      dataFim?: string;
+    }
+  ) => {
+    setLoading(true);
+
     try {
-      const resposta = await listarSolicitacoesAction();
+      const resposta = await listarSolicitacoesAction(filtros);
 
       const dadosFormatados: Solicitacao[] = resposta.content.map(
         (solicitacao) => ({
@@ -193,7 +207,7 @@ export default function GerenciarSolicitações() {
       );
 
       setSolicitacoes(dadosFormatados);
-    } catch(error) {
+    } catch (error) {
       console.error(error);
       setErro("Não foi possível carregar as solicitações.");
     } finally {
@@ -219,7 +233,7 @@ export default function GerenciarSolicitações() {
       </div>
 
       <section className="bg-white border-none rounded-xl p-5 mx-5 mt-2">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
               Título
@@ -227,6 +241,8 @@ export default function GerenciarSolicitações() {
             <div className="relative flex items-center">
               <input 
                 type="text"
+                value={filtroTitulo}
+                onChange={(e) => setFiltroTitulo(e.target.value)}
                 placeholder="Digite o título..."
                 className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 focus:outline-none text-sm font-medium"
               />
@@ -239,18 +255,16 @@ export default function GerenciarSolicitações() {
             </label>
             <div className="relative flex items-center">
               <select
-                defaultValue=""
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 focus:outline-none text-sm font-medium appearance-none cursor-pointer invalid:text-gray-400"
-                required
+                value={filtroCategoria}
+                onChange={(e) => setFiltroCategoria(e.target.value)}
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 focus:outline-none text-sm font-medium appearance-none cursor-pointer"
               >
-                <option value="" disabled hidden>
-                  Selecione uma categoria...
-                </option>
-                <option value="TI">TI</option>
-                <option value="RH">RH</option>
-                <option value="COMPRAS">Compras</option>
-                <option value="FINANCEIRO">Financeiro</option>
-                <option value="INFRAESTRUTURA">Infraestrutura</option>
+                <option value="">Todas as categorias</option>
+                <option value="1">TI</option>
+                <option value="2">RH</option>
+                <option value="3">Compras</option>
+                <option value="4">Financeiro</option>
+                <option value="5">Infraestrutura</option>
               </select>
               <div className="absolute right-3 pointer-events-none text-gray-500">
                 <svg
@@ -276,6 +290,8 @@ export default function GerenciarSolicitações() {
             </label>
             <div className="relative flex items-center">
               <select
+                value={filtroStatus}
+                onChange={(e) => setFiltroStatus(e.target.value)}
                 defaultValue=""
                 className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 focus:outline-none text-sm font-medium appearance-none cursor-pointer invalid:text-gray-400"
                 required
@@ -307,32 +323,65 @@ export default function GerenciarSolicitações() {
 
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
-              Período
+              DATA DE ABERTURA
             </label>
             <div className="relative flex items-center">
-              <input 
+              <input
                 type="date"
-                placeholder="Digite a data..."
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 focus:outline-none text-sm font-medium"
+                value={filtroDataInicio}
+                onChange={(e) => setFiltroDataInicio(e.target.value)}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 focus:outline-none text-sm"
               />
             </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              DATA DE FIM
+            </label>
+              <input
+                type="date"
+                value={filtroDataFim}
+                onChange={(e) => setFiltroDataFim(e.target.value)}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 focus:outline-none text-sm"
+              />
           </div>
         </div>
         <div className="flex flex-row justify-center sm:justify-end items-center gap-3 mt-5">
           <button
             type="button"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-red-500 hover:text-white transition-colors duration-500 cursor-pointer"
-          >
-            <CircleX  className="w-4 h-4"/>
-            Limpar Filtros
-          </button>
-          
-          <button
-            type="submit"
+            onClick={() =>
+              carregarSolicitacoes({
+                titulo: filtroTitulo,
+                categoriaId: filtroCategoria
+                  ? Number(filtroCategoria)
+                  : undefined,
+                status: filtroStatus || undefined,
+                dataInicio: filtroDataInicio || undefined,
+                dataFim: filtroDataFim || undefined,
+              })
+            }
             className="flex items-center gap-2 bg-[#176b45] hover:bg-[#125436] text-white font-semibold text-sm rounded-lg px-6 py-2.5 cursor-pointer transition-colors duration-500 shadow-sm"
           >
             <Funnel className="w-4 h-4" />
             Filtrar
+          </button>
+          
+          <button
+            type="button"
+            onClick={() => {
+              setFiltroTitulo("");
+              setFiltroCategoria("");
+              setFiltroStatus("");
+              setFiltroDataInicio("");
+              setFiltroDataFim("");
+
+              carregarSolicitacoes();
+            }}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-red-500 hover:text-white transition-colors duration-500 cursor-pointer"
+          >
+            <CircleX className="w-4 h-4" />
+            Limpar Filtros
           </button>
         </div>
       

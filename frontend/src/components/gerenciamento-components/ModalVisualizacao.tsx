@@ -111,7 +111,7 @@ export default function ModalVisualizarSolicitacao({
               </label>
               <input
                 type="text"
-                value={solicitacoes?.titulo}
+                value={solicitacoes?.titulo ?? ""}
                 readOnly
                 className="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg text-gray-700 text-sm font-medium focus:outline-none cursor-default"
               />

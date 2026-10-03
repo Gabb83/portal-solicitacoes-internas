@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PutMapping;
 
+import com.empresa.portal_solicitacoes.dtos.UsuarioUpdateDTO;
 import com.empresa.portal_solicitacoes.dtos.UsuarioCreateDTO;
 import com.empresa.portal_solicitacoes.dtos.UsuarioResponseDTO;
 import com.empresa.portal_solicitacoes.services.UsuarioService;
@@ -37,6 +39,11 @@ public class UsuarioController {
   @GetMapping("/{id}")
   public ResponseEntity<UsuarioResponseDTO> buscarId(@PathVariable Long id) {
     return ResponseEntity.ok(usuarioService.buscarId(id));
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<UsuarioResponseDTO> atualizar(@PathVariable Long id, @RequestBody UsuarioUpdateDTO dto) {
+    return ResponseEntity.ok(usuarioService.atualizar(id, dto));
   }
 
   @DeleteMapping("/{id}")

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.empresa.portal_solicitacoes.dtos.UsuarioCreateDTO;
 import com.empresa.portal_solicitacoes.dtos.UsuarioResponseDTO;
+import com.empresa.portal_solicitacoes.dtos.UsuarioUpdateDTO;
 import com.empresa.portal_solicitacoes.exceptions.ResourceNotFoundException;
 import com.empresa.portal_solicitacoes.models.Usuario;
 import com.empresa.portal_solicitacoes.repositories.UsuarioRepository;
@@ -43,6 +44,24 @@ public class UsuarioService {
               .stream()
               .map(UsuarioResponseDTO::fromEntity)
               .toList();
+  }
+
+  @Transactional
+  public UsuarioResponseDTO atualizar(Long id, UsuarioUpdateDTO dto) {
+
+      Usuario usuario = usuarioRepository.findById(id)
+              .orElseThrow(() ->
+                  new ResourceNotFoundException(
+                      "Usuário não encontrado com o ID: " + id
+                  )
+              );
+
+      usuario.setNome(dto.nome());
+      usuario.setEmail(dto.email());
+
+      Usuario atualizado = usuarioRepository.save(usuario);
+
+      return UsuarioResponseDTO.fromEntity(atualizado);
   }
 
   @Transactional(readOnly = true)

@@ -32,7 +32,7 @@ export default function Header({
       <button
         type="button"
         onClick={onAbrirMenu}
-        className="md:hidden text-gray-700 hover:text-[#176b45] transition-colors"
+        className="md:hidden text-gray-700 hover:text-[#176b45] transition-colors cursor-pointer"
         aria-label="Abrir menu"
         title="Abrir menu"
       >

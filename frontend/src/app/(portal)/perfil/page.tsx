@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
-import { AtSign, Calendar, Camera, Hash, User } from "lucide-react";
-
 import { buscarUsuarioId } from "@/services/usuarios";
+import { Camera } from "lucide-react";
+import PerfilForm from "@/components/PerfilForm";
 
 export default async function Perfil() {
   const cookieStore = await cookies();
@@ -18,16 +18,6 @@ export default async function Perfil() {
   const usuarioId = Number(payload.sub);
 
   const usuario = await buscarUsuarioId(usuarioId);
-
-  function formatarData(data: string) {
-    if (!data) return "";
-
-    return new Intl.DateTimeFormat("pt-BR", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    }).format(new Date(data));
-  }
 
   return (
     <div className="min-h-full bg-[#f9f9f9] px-3 py-4 sm:px-5 sm:py-6 lg:px-8">
@@ -53,97 +43,7 @@ export default async function Perfil() {
           </div>
 
           <div className="px-4 pb-5 pt-14 sm:px-6 sm:pb-7 sm:pt-16 lg:px-8">
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-800">
-                Meu Perfil
-              </h2>
-
-              <p className="mt-1 text-sm text-gray-500">
-                Gerencie suas informações pessoais
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="flex min-w-0 flex-col gap-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
-                  Nome Completo
-                </label>
-
-                <div className="relative flex min-w-0 items-center">
-                  <User
-                    size={18}
-                    className="absolute left-3 shrink-0 text-gray-400"
-                  />
-
-                  <input
-                    readOnly
-                    type="text"
-                    value={usuario.nome}
-                    className="min-w-0 w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-3 text-sm font-medium text-gray-800 outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="flex min-w-0 flex-col gap-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
-                  E-mail
-                </label>
-
-                <div className="relative flex min-w-0 items-center">
-                  <AtSign
-                    size={18}
-                    className="absolute left-3 shrink-0 text-gray-400"
-                  />
-
-                  <input
-                    readOnly
-                    type="text"
-                    value={usuario.email}
-                    className="min-w-0 w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-3 text-sm font-medium text-gray-800 outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="flex min-w-0 flex-col gap-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
-                  ID da Conta
-                </label>
-
-                <div className="relative flex min-w-0 items-center">
-                  <Hash
-                    size={18}
-                    className="absolute left-3 shrink-0 text-gray-400"
-                  />
-
-                  <input
-                    readOnly
-                    type="text"
-                    value={usuario.id.toString()}
-                    className="min-w-0 w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-3 text-sm font-mono text-gray-800 outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="flex min-w-0 flex-col gap-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
-                  Membro desde
-                </label>
-
-                <div className="relative flex min-w-0 items-center">
-                  <Calendar
-                    size={18}
-                    className="absolute left-3 shrink-0 text-gray-400"
-                  />
-
-                  <input
-                    readOnly
-                    type="text"
-                    value={formatarData(usuario.dataCriacao)}
-                    className="min-w-0 w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-3 text-sm font-medium text-gray-800 outline-none"
-                  />
-                </div>
-              </div>
-            </div>
+            <PerfilForm usuario={usuario}/>
           </div>
         </div>
       </div>
