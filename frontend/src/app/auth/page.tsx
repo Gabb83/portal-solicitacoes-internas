@@ -133,7 +133,6 @@ export default function Login() {
                 <Lock size={20} />
                 <div className="h-px flex-1 bg-gray-500" />
               </div>
-
               <p className="mt-3 text-center text-[11px] text-gray-400">
                 Acesso restrito a usuários autorizados
               </p>

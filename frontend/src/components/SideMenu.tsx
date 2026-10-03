@@ -1,36 +1,14 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import {
-  ChartNoAxesCombined,
-  FilePlus,
-  FolderOpen,
-  User,
-  X,
-} from "lucide-react";
+import { ChartNoAxesCombined, FilePlus, FolderOpen, User, X } from "lucide-react";
 import SideMenuOpcao from "./SideMenuOpcao";
 
 const itensNavegacao = [
-  {
-    nome: "Dashboard",
-    href: "/",
-    icon: ChartNoAxesCombined,
-  },
-  {
-    nome: "Nova Solicitação",
-    href: "/nova-solicitacao",
-    icon: FilePlus,
-  },
-  {
-    nome: "Gerenciar Solicitações",
-    href: "/gerenciar-solicitacoes",
-    icon: FolderOpen,
-  },
-  {
-    nome: "Perfil",
-    href: "/perfil",
-    icon: User,
-  },
+  { nome: "Dashboard", href: "/", icon: ChartNoAxesCombined },
+  { nome: "Nova Solicitação", href: "/nova-solicitacao", icon: FilePlus },
+  { nome: "Gerenciar Solicitações", href: "/gerenciar-solicitacoes", icon: FolderOpen },
+  { nome: "Perfil", href: "/perfil", icon: User },
 ];
 
 interface SideMenuProps {
@@ -39,48 +17,23 @@ interface SideMenuProps {
 }
 
 export default function SideMenu({
-  aberto,
-  onFechar,
+  aberto, onFechar,
 }: SideMenuProps) {
   const pathname = usePathname();
 
   return (
     <>
-      {/* Overlay mobile */}
       <div
-        className={`
-          fixed inset-0 z-40 bg-black/40
-          transition-opacity duration-300
-          md:hidden
-          ${aberto ? "opacity-100" : "pointer-events-none opacity-0"}
-        `}
+        className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 md:hidden ${aberto ? "opacity-100" : "pointer-events-none opacity-0"}`}
         onClick={onFechar}
       />
 
-      {/* Menu */}
-      <aside
-        className={`
-          bg-[#176b45] text-white
-          h-screen w-64
-          flex flex-col justify-start
-          p-4 shadow-xl select-none
-
-          fixed inset-y-0 left-0 z-50
-          transition-transform duration-300 ease-in-out
-
-          md:static
-          md:translate-x-0
-
-          ${aberto ? "translate-x-0" : "-translate-x-full"}
-        `}
-      >
-        {/* Cabeçalho do menu */}
+      <aside className={`bg-[#176b45] text-white h-screen w-64 flex flex-col justify-start p-4 shadow-xl select-none fixed inset-y-0 left-0 z-50 transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${aberto ? "translate-x-0" : "-translate-x-full"}`}>
         <div>
           <div className="flex items-start justify-between gap-3">
             <h1 className="font-bold text-base leading-tight">
               Portal de Solicitações Internas
             </h1>
-
             <button
               type="button"
               onClick={onFechar}
@@ -90,18 +43,12 @@ export default function SideMenu({
               <X size={22} />
             </button>
           </div>
-
           <div className="h-px bg-[#16794d] mt-4 mb-2" />
         </div>
 
-        {/* Navegação */}
         <nav className="flex flex-col gap-1.5">
           {itensNavegacao.map((item) => {
-            const isAtivo =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(item.href);
-
+            const isAtivo = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
             return (
               <SideMenuOpcao
                 key={item.nome}

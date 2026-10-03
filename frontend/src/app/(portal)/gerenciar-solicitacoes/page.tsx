@@ -39,85 +39,85 @@ export default function GerenciarSolicitações() {
   }
 
   const handleAbrirModalEditar = async (
-  solicitacao: Solicitacao
-) => {
-  setModalEditarOpen(true);
-  setLoadingEditar(true);
-  setErroEditar(null);
-  setSolicitacaoEditar(null);
-
-  try {
-    const resposta = await buscarSolicitacaoId(
-      Number(solicitacao.id)
-    );
-
-    setSolicitacaoEditar(resposta);
-  } catch (error) {
-    console.error(
-      "Erro ao buscar solicitação para edição:",
-      error
-    );
-
-    setErroEditar(
-      "Não foi possível carregar os dados da solicitação."
-    );
-  } finally {
-    setLoadingEditar(false);
-  }
-};
-
-const handleSalvarEdicao = async (
-  dados: ISolicitacaoUpdate
-) => {
-  if (!solicitacaoEditar) return;
-
-  setSavingEditar(true);
-  setErroEditar(null);
-
-  try {
-    const resposta = await atualizarSolicitacaoId(
-      solicitacaoEditar.id,
-      dados
-    );
-
-    console.log("Solicitação atualizada:", resposta);
-
-    setSolicitacoes((prev) =>
-      prev.map((item) => {
-        if (item.id !== String(resposta.id)) {
-          return item;
-        }
-
-        return {
-          ...item,
-          titulo: resposta.titulo,
-          categoria: resposta.categoriaNome,
-          status:
-            resposta.status === "ABERTO"
-              ? "Aberto"
-              : resposta.status === "EM_ATENDIMENTO"
-                ? "Em atendimento"
-                : "Concluído",
-        };
-      })
-    );
-
-    setModalEditarOpen(false);
+    solicitacao: Solicitacao
+  ) => {
+    setModalEditarOpen(true);
+    setLoadingEditar(true);
+    setErroEditar(null);
     setSolicitacaoEditar(null);
 
-  } catch (error) {
-    console.error(
-      "Erro ao atualizar solicitação:",
-      error
-    );
+    try {
+      const resposta = await buscarSolicitacaoId(
+        Number(solicitacao.id)
+      );
 
-    setErroEditar(
-      "Não foi possível atualizar a solicitação."
-    );
-  } finally {
-    setSavingEditar(false);
-  }
-};
+      setSolicitacaoEditar(resposta);
+    } catch (error) {
+      console.error(
+        "Erro ao buscar solicitação para edição:",
+        error
+      );
+
+      setErroEditar(
+        "Não foi possível carregar os dados da solicitação."
+      );
+    } finally {
+      setLoadingEditar(false);
+    }
+  };
+
+  const handleSalvarEdicao = async (
+    dados: ISolicitacaoUpdate
+  ) => {
+    if (!solicitacaoEditar) return;
+
+    setSavingEditar(true);
+    setErroEditar(null);
+
+    try {
+      const resposta = await atualizarSolicitacaoId(
+        solicitacaoEditar.id,
+        dados
+      );
+
+      console.log("Solicitação atualizada:", resposta);
+
+      setSolicitacoes((prev) =>
+        prev.map((item) => {
+          if (item.id !== String(resposta.id)) {
+            return item;
+          }
+
+          return {
+            ...item,
+            titulo: resposta.titulo,
+            categoria: resposta.categoriaNome,
+            status:
+              resposta.status === "ABERTO"
+                ? "Aberto"
+                : resposta.status === "EM_ATENDIMENTO"
+                  ? "Em atendimento"
+                  : "Concluído",
+          };
+        })
+      );
+
+      setModalEditarOpen(false);
+      setSolicitacaoEditar(null);
+
+    } catch (error) {
+      console.error(
+        "Erro ao atualizar solicitação:",
+        error
+      );
+
+      setErroEditar(
+        "Não foi possível atualizar a solicitação."
+      );
+    } finally {
+      setSavingEditar(false);
+    }
+  };
 
   const handleAbrirModalVisualizar = async (
     solicitacao: Solicitacao
@@ -144,30 +144,30 @@ const handleSalvarEdicao = async (
   };
 
   const handleConfirmarDeletar = async () => {
-  if(!solicitacoesDeletar) return;
+    if(!solicitacoesDeletar) return;
 
-  const id = solicitacoesDeletar.id;
-  console.log("ID selecionado:", id);
+    const id = solicitacoesDeletar.id;
+    console.log("ID selecionado:", id);
 
-  try {
-    await deletarSolicitacao(Number(id));
+    try {
+      await deletarSolicitacao(Number(id));
 
-    console.log("DELETE realizado!");
+      console.log("DELETE realizado!");
 
-    setSolicitacoes((prev) => {
-      console.log("Lista antes:", prev);
-      const novaLista = prev.filter((item) => item.id !== id);
+      setSolicitacoes((prev) => {
+        console.log("Lista antes:", prev);
+        const novaLista = prev.filter((item) => item.id !== id);
 
-      console.log("Lista depois:", novaLista);
-      return novaLista;
-    });
+        console.log("Lista depois:", novaLista);
+        return novaLista;
+      });
 
-    setModalOpen(false);
-    setSolicitacoesDeletar(null);
-  } catch (error) {
-    console.error("Erro ao deletar solicitação:", error);
-  }
-};
+      setModalOpen(false);
+      setSolicitacoesDeletar(null);
+    } catch (error) {
+      console.error("Erro ao deletar solicitação:", error);
+    }
+  };
 
   const carregarSolicitacoes = async () => {
     try {
@@ -363,22 +363,22 @@ const handleSalvarEdicao = async (
           setErroVisualizar(null);
         }}
       />
-<ModalAtualizacaoSolicitacao
-  isOpen={modalEditarOpen}
-  solicitacao={solicitacaoEditar}
-  loading={loadingEditar}
-  saving={savingEditar}
-  error={erroEditar}
-  onClose={() => {
-    if (savingEditar) return;
 
-    setModalEditarOpen(false);
-    setSolicitacaoEditar(null);
-    setErroEditar(null);
-  }}
-  onSave={handleSalvarEdicao}
-/>
-      
+      <ModalAtualizacaoSolicitacao
+        isOpen={modalEditarOpen}
+        solicitacao={solicitacaoEditar}
+        loading={loadingEditar}
+        saving={savingEditar}
+        error={erroEditar}
+        onClose={() => {
+          if (savingEditar) return;
+
+          setModalEditarOpen(false);
+          setSolicitacaoEditar(null);
+          setErroEditar(null);
+        }}
+        onSave={handleSalvarEdicao}
+      />
     </div>
   );
 }

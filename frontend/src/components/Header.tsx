@@ -20,24 +20,20 @@ export default function Header({
   onAbrirMenu,
 }: HeaderProps) {
   const router = useRouter();
-
-  const [usuario, setUsuario] =
-    useState<UsuarioLogado | null>(null);
+  const [usuario, setUsuario] = useState<UsuarioLogado | null>(null);
 
   useEffect(() => {
     const usuarioSalvo = localStorage.getItem("usuario");
 
-    if (usuarioSalvo) {
+    if(usuarioSalvo) {
       setUsuario(JSON.parse(usuarioSalvo));
     }
   }, []);
 
   function handleLogout() {
     localStorage.removeItem("usuario");
-
-    document.cookie =
-      "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
+    
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     router.push("/auth");
   }
 
@@ -46,8 +42,6 @@ export default function Header({
 
   return (
     <header className="bg-white h-12 flex items-center justify-between gap-4 px-4 sm:px-7">
-
-      {/* Botão mobile */}
       <button
         type="button"
         onClick={onAbrirMenu}
@@ -58,27 +52,20 @@ export default function Header({
         <Menu size={24} />
       </button>
 
-      {/* Usuário */}
       <div className="ml-auto flex items-center gap-3">
-
         <Link
           href="/perfil"
           className="flex items-center gap-2 bg-[#f8f8f8] rounded-3xl p-1 px-1.5 cursor-pointer hover:bg-gray-100 transition-colors"
         >
-          {/* Foto / Inicial */}
           <div className="w-7 h-7 shrink-0 bg-[#176b45] rounded-full flex items-center justify-center">
             <span className="text-white font-bold text-sm">
               {inicial}
             </span>
           </div>
-
-          {/* Nome */}
           <span className="font-medium text-gray-800 truncate pr-2 max-w-32 sm:max-w-40">
             {nome}
           </span>
         </Link>
-
-        {/* Logout */}
         <button
           type="button"
           onClick={handleLogout}
@@ -88,7 +75,6 @@ export default function Header({
         >
           <LogOut size={22} />
         </button>
-
       </div>
     </header>
   );

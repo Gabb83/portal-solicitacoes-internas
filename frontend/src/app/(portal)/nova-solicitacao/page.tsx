@@ -10,14 +10,9 @@ export default async function NovaSolicicao() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
-  if (!token) {
-    return null;
-  }
+  if(!token) { return null; }
 
-  const usuarioId = Number(
-    token.replace("session-token-", "")
-  );
-  
+  const usuarioId = Number(token.replace("session-token-", ""));
   const usuario = await buscarUsuarioId(usuarioId);
   const dataHoje = new Date().toLocaleDateString("pt-BR");
   
@@ -144,5 +139,5 @@ export default async function NovaSolicicao() {
         </div>
       </form>
     </div>
-  )
+  );
 }
