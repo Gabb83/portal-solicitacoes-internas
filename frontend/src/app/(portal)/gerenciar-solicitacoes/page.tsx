@@ -218,7 +218,7 @@ const handleSalvarEdicao = async (
         </div>
       </div>
 
-      <section className="bg-white border-none rounded-xl p-5 mx-5 mt-2 ">
+      <section className="bg-white border-none rounded-xl p-5 mx-5 mt-2">
         <div className="grid grid-cols-4 gap-4">
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">

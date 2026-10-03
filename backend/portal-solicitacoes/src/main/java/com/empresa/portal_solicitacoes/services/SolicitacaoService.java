@@ -10,6 +10,9 @@ import com.empresa.portal_solicitacoes.exceptions.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -153,23 +156,23 @@ public class SolicitacaoService {
 
 
     @Transactional
-public void deletar(Long id) {
+    public void deletar(Long id) {
 
-    Solicitacao solicitacao = solicitacaoRepository.findById(id)
-            .orElseThrow(() ->
-                new ResourceNotFoundException(
-                    "Solicitação não encontrada com o ID: " + id
-                )
+        Solicitacao solicitacao = solicitacaoRepository.findById(id)
+                .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                        "Solicitação não encontrada com o ID: " + id
+                    )
+                );
+
+        if (solicitacao.getStatus() != StatusSolicitacao.ABERTO) {
+            throw new RegraNegocioException(
+                "Apenas solicitações com status ABERTO podem ser excluídas."
             );
+        }
 
-    if (solicitacao.getStatus() != StatusSolicitacao.ABERTO) {
-        throw new RegraNegocioException(
-            "Apenas solicitações com status ABERTO podem ser excluídas."
-        );
+        solicitacaoRepository.delete(solicitacao);
     }
-
-    solicitacaoRepository.delete(solicitacao);
-}
 
     @Transactional(readOnly = true)
     public DashboardStatusDTO obterEstatisticasDashboard() {
@@ -178,7 +181,32 @@ public void deletar(Long id) {
         long emAtendimento = solicitacaoRepository.countByStatus(StatusSolicitacao.EM_ATENDIMENTO);
         long concluidas = solicitacaoRepository.countByStatus(StatusSolicitacao.CONCLUIDO);
 
-        return new DashboardStatusDTO(total, abertas, emAtendimento, concluidas);
+        Map<String, Long> porStatus = solicitacaoRepository
+            .contarPorStatus()
+            .stream()
+            .collect(Collectors.toMap(
+                item -> ((StatusSolicitacao) item[0]).name(),
+                item -> (Long) item[1]
+            ));
+
+        Map<String, Long> porCategoria = solicitacaoRepository
+            .contarPorCategoria()
+            .stream()
+            .collect(Collectors.toMap(
+                item -> (String) item[0],
+                item -> (Long) item[1],
+                (a, b) -> a,
+                LinkedHashMap::new
+            ));
+
+        return new DashboardStatusDTO(
+            total,
+            abertas,
+            emAtendimento,
+            concluidas,
+            porStatus,
+            porCategoria
+        );
     }
 
 }
