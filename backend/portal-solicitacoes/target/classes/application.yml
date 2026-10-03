@@ -1,0 +1,29 @@
+server: 
+  port: 8080
+
+jwt:
+  secret: ${JWT_SECRET:8f3a7c9d2e1b6a4f9c8d7e2a5b1f6c3d9e4a7b2c8f5d1e6}
+  expiration: 86400000
+
+spring: 
+  application:
+    name: portal-solicitacoes
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/portal_solicitacoes}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgrespassword}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    defer-datasource: true
+    properties:
+      hibernate:
+        format_sql: true
+  
+  sql:
+    init:
+      mode: always
