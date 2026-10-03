@@ -1,19 +1,25 @@
 import { cookies } from "next/headers";
 import { Plus } from "lucide-react";
-
 import { getCategorias } from "@/services/categorias";
 import { criarSolicitacao } from "@/actions/solicitacoes";
-import { buscarUsuarioId } from "@/services/usuarios";
 
 export default async function NovaSolicicao() {
   const categorias = await getCategorias();
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
-  if(!token) { return null; }
+  if (!token) {
+    return null;
+  }
 
-  const usuarioId = Number(token.replace("session-token-", ""));
-  const usuario = await buscarUsuarioId(usuarioId);
+  const payload = JSON.parse(
+    Buffer.from(token.split(".")[1], "base64url").toString()
+  );
+
+  const usuario = {
+    nome: payload.nome,
+  };
+
   const dataHoje = new Date().toLocaleDateString("pt-BR");
   
   return (

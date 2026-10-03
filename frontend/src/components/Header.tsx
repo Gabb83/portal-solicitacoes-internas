@@ -2,42 +2,29 @@
 
 import Link from "next/link";
 import { LogOut, Menu } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-interface UsuarioLogado {
-  id: number;
-  email: string;
-  nome: string;
-  token: string;
-}
+import { sair } from "@/actions/auth";
+import { IUsuarioPerfil } from "@/types/usuarios";
 
 interface HeaderProps {
+  usuario: IUsuarioPerfil;
   onAbrirMenu: () => void;
 }
 
 export default function Header({
+  usuario,
   onAbrirMenu,
 }: HeaderProps) {
   const router = useRouter();
-  const [usuario, setUsuario] = useState<UsuarioLogado | null>(null);
 
-  useEffect(() => {
-    const usuarioSalvo = localStorage.getItem("usuario");
-
-    if(usuarioSalvo) {
-      setUsuario(JSON.parse(usuarioSalvo));
-    }
-  }, []);
-
-  function handleLogout() {
-    localStorage.removeItem("usuario");
-    
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  async function handleLogout() {
+    await sair();
     router.push("/auth");
+    router.refresh()
   }
 
-  const nome = usuario?.nome || "Usuário";
+  const nome = usuario.nome || "Usuário";
   const inicial = nome.charAt(0).toUpperCase();
 
   return (
@@ -62,10 +49,12 @@ export default function Header({
               {inicial}
             </span>
           </div>
+
           <span className="font-medium text-gray-800 truncate pr-2 max-w-32 sm:max-w-40">
             {nome}
           </span>
         </Link>
+
         <button
           type="button"
           onClick={handleLogout}

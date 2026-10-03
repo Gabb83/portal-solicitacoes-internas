@@ -44,7 +44,7 @@ public class SolicitacaoController {
     }
 
   @PostMapping
-  public ResponseEntity<SolicitacaoResponseDTO> criar(@RequestBody SolicitacaoRequestDTO dto) {
+  public ResponseEntity<SolicitacaoResponseDTO> criar(@RequestBody @Valid SolicitacaoRequestDTO dto) {
       SolicitacaoResponseDTO nova = solicitacaoService.criar(dto);
       return ResponseEntity.status(HttpStatus.CREATED).body(nova);
   }

@@ -5,6 +5,7 @@ import { CircleX, Funnel } from "lucide-react";
 
 import type { ISolicitacaoApi, ISolicitacaoUpdate } from "@/types/solicitacao";
 import { listarSolicitacoes, buscarSolicitacaoId, atualizarSolicitacaoId, deletarSolicitacao } from "@/services/solicitacoes";
+import { listarSolicitacoesAction, buscarSolicitacaoAction, } from "@/actions/solicitacoes";
 
 import SolicitacoesTabela, { Solicitacao } from "@/components/gerenciamento-components/SolicitacoesTabela";
 import ModalConfirmaçãoDelete from "@/components/gerenciamento-components/ModalConfirmacaoDelete";
@@ -12,7 +13,6 @@ import ModalVisualizarSolicitacao from "@/components/gerenciamento-components/Mo
 import ModalAtualizacaoSolicitacao from "@/components/gerenciamento-components/ModalAtualizacao";
 
 export default function GerenciarSolicitações() {
-
   const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([]);
   const [solicitacaoVisualizar, setSolicitacaoVisualizar] = useState<ISolicitacaoApi | null>(null);
   
@@ -47,7 +47,7 @@ export default function GerenciarSolicitações() {
     setSolicitacaoEditar(null);
 
     try {
-      const resposta = await buscarSolicitacaoId(
+      const resposta = await buscarSolicitacaoAction(
         Number(solicitacao.id)
       );
 
@@ -128,7 +128,7 @@ export default function GerenciarSolicitações() {
     setSolicitacaoVisualizar(null);
 
     try {
-      const resposta = await buscarSolicitacaoId(
+      const resposta = await buscarSolicitacaoAction(
         Number(solicitacao.id)
       );
 
@@ -171,7 +171,7 @@ export default function GerenciarSolicitações() {
 
   const carregarSolicitacoes = async () => {
     try {
-      const resposta = await listarSolicitacoes();
+      const resposta = await listarSolicitacoesAction();
 
       const dadosFormatados: Solicitacao[] = resposta.content.map(
         (solicitacao) => ({

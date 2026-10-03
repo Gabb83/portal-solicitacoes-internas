@@ -13,9 +13,6 @@ public record SolicitacaoRequestDTO (
   String descricao,
 
   @NotNull (message = "A categoria é obrigatória")
-  Long categoriaId,
+  Long categoriaId
 
-  @NotNull(message = "O usuário é obrigatório")
-  Long usuarioId
-  
 ){}

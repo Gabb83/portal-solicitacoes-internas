@@ -1,6 +1,10 @@
 server: 
   port: 8080
 
+jwt:
+  secret: ${JWT_SECRET:8f3a7c9d2e1b6a4f9c8d7e2a5b1f6c3d9e4a7b2c8f5d1e6}
+  expiration: 86400000
+
 spring: 
   application:
     name: portal-solicitacoes

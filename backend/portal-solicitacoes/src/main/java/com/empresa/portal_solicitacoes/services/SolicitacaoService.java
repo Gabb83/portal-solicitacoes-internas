@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,23 +35,38 @@ public class SolicitacaoService {
   }
 
   @Transactional
-    public SolicitacaoResponseDTO criar(SolicitacaoRequestDTO dto) {
-        Categoria categoria = categoriaRepository.findById(dto.categoriaId())
-                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada com o ID: " + dto.categoriaId()));
+public SolicitacaoResponseDTO criar(SolicitacaoRequestDTO dto) {
 
-        Usuario usuario = usuarioRepository.findById(dto.usuarioId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o ID: " + dto.usuarioId()));
+    Categoria categoria = categoriaRepository.findById(dto.categoriaId())
+            .orElseThrow(() ->
+                new ResourceNotFoundException(
+                    "Categoria não encontrada com o ID: " + dto.categoriaId()
+                )
+            );
 
-        Solicitacao solicitacao = new Solicitacao();
-        solicitacao.setTitulo(dto.titulo());
-        solicitacao.setDescricao(dto.descricao());
-        solicitacao.setCategoria(categoria);
-        solicitacao.setUsuario(usuario);
-        solicitacao.setStatus(StatusSolicitacao.ABERTO);
+    Authentication authentication =
+            SecurityContextHolder.getContext().getAuthentication();
 
-        Solicitacao salva = solicitacaoRepository.save(solicitacao);
-        return SolicitacaoResponseDTO.fromEntity(salva);
-    }
+    Long usuarioId = Long.valueOf(authentication.getName());
+
+    Usuario usuario = usuarioRepository.findById(usuarioId)
+            .orElseThrow(() ->
+                new ResourceNotFoundException(
+                    "Usuário não encontrado com o ID: " + usuarioId
+                )
+            );
+
+    Solicitacao solicitacao = new Solicitacao();
+    solicitacao.setTitulo(dto.titulo());
+    solicitacao.setDescricao(dto.descricao());
+    solicitacao.setCategoria(categoria);
+    solicitacao.setUsuario(usuario);
+    solicitacao.setStatus(StatusSolicitacao.ABERTO);
+
+    Solicitacao salva = solicitacaoRepository.save(solicitacao);
+
+    return SolicitacaoResponseDTO.fromEntity(salva);
+}
 
     @Transactional(readOnly = true)
     public Page<SolicitacaoResponseDTO> buscarComFiltros(

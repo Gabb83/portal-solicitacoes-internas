@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { ShieldLock, Lock, EyeOff, Eye } from "lucide-react";
-import { login } from "@/services/auth";
+import { autenticar } from "@/actions/auth";
 
 export default function Login() {
   const router = useRouter();
@@ -17,24 +17,23 @@ export default function Login() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     try {
       setLoading(true);
       setErro(null);
 
-      const resposta = await login({
-        email, senha,
-      });
+      const resultado = await autenticar(email, senha);
 
-      console.log("Login realizado:", resposta);
-      localStorage.setItem("usuario", JSON.stringify(resposta));
-      document.cookie = `token=${resposta.token}; path=/;`;
+      if (!resultado.sucesso) {
+        setErro(resultado.erro);
+        return;
+      }
 
       router.push("/");
+      router.refresh();
 
-    } catch(error) {
+    } catch (error) {
       console.error("Erro ao realizar login:", error);
-      setErro("E-mail ou senha inválidos.");
+      setErro("Não foi possível realizar o login.");
 
     } finally {
       setLoading(false);
