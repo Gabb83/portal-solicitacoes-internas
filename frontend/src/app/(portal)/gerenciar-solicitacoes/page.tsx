@@ -292,7 +292,6 @@ export default function GerenciarSolicitações() {
               <select
                 value={filtroStatus}
                 onChange={(e) => setFiltroStatus(e.target.value)}
-                defaultValue=""
                 className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 focus:outline-none text-sm font-medium appearance-none cursor-pointer invalid:text-gray-400"
                 required
               >
