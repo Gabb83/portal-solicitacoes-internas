@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
   private final JwtService jwtService;
 
   public JwtAuthenticationFilter(JwtService jwtService) {
@@ -31,24 +30,10 @@ protected void doFilterInternal(
         HttpServletResponse response,
         FilterChain filterChain
 ) throws ServletException, IOException {
-
-    System.out.println(
-        "🔥 JWT FILTER: " +
-        request.getMethod() +
-        " " +
-        request.getRequestURI()
-    );
-
     String authorization = request.getHeader("Authorization");
 
-    System.out.println(
-        "🔐 AUTHORIZATION: " + authorization
-    );
 
-    if (authorization == null || !authorization.startsWith("Bearer ")) {
-
-        System.out.println("❌ JWT não encontrado");
-
+    if(authorization == null || !authorization.startsWith("Bearer ")) {
         filterChain.doFilter(request, response);
         return;
     }
@@ -72,21 +57,13 @@ protected void doFilterInternal(
                 .getContext()
                 .setAuthentication(authentication);
 
-        System.out.println(
-            "✅ JWT VALIDADO - USUARIO: " + usuarioId
-        );
-
     } catch (Exception e) {
 
-        System.out.println(
-            "❌ JWT INVÁLIDO: " + e.getMessage()
-        );
 
         SecurityContextHolder.clearContext();
     }
 
     System.out.println(
-        "🔎 AUTH: " +
         SecurityContextHolder.getContext().getAuthentication()
     );
 

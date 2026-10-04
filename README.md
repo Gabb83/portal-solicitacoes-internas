@@ -42,12 +42,13 @@ npm run dev
 ```
 ### 3. Rodar backend (new terminal ou extension pack for java vscode)
 ```bash
-cd backend (dir portal-solicitacoes-internas/backend)
+cd backend/portal-solicitacoes (dir portal-solicitacoes-internas/backend/portal-solicitacoes)
+./mvnw spring-boot:run
 
-mvn clean install
-mvn spring-boot:run
 ou
-PortalSolicitacoesInternasApplication.java (Run)
 
+PortalSolicitacoesInternasApplication.java (Run)
 (disponível em http://localhost:8080)
+
+Swagger: http://localhost:8080/swagger-ui/index.html
 ```

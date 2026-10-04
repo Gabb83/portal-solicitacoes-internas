@@ -122,7 +122,7 @@ export default function ModalVisualizarSolicitacao({
               </label>
               <input
                 type="text"
-                value={solicitacoes?.categoriaNome}
+                value={solicitacoes?.categoriaNome ?? ""}
                 readOnly
                 className="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg text-gray-700 text-sm font-medium focus:outline-none cursor-default"
               />
@@ -134,7 +134,7 @@ export default function ModalVisualizarSolicitacao({
               Descrição Detalhada
             </label>
             <textarea
-              value={solicitacoes?.descricao}
+              value={solicitacoes?.descricao ?? ""}
               readOnly
               rows={6}
               className="w-full resize-none px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg text-gray-700 text-sm font-medium focus:outline-none cursor-default"
