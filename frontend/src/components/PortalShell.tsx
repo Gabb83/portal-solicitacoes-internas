@@ -11,8 +11,7 @@ interface PortalShellProps {
 }
 
 export default function PortalShell({
-  children,
-  usuario,
+  children, usuario,
 }: PortalShellProps) {
   const [menuAberto, setMenuAberto] = useState(false);
 
@@ -22,13 +21,11 @@ export default function PortalShell({
         aberto={menuAberto}
         onFechar={() => setMenuAberto(false)}
       />
-
       <div className="flex flex-1 min-w-0 flex-col">
         <Header
           usuario={usuario}
           onAbrirMenu={() => setMenuAberto(true)}
         />
-
         <main className="flex-1 overflow-y-auto">
           {children}
         </main>

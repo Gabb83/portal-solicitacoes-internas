@@ -24,8 +24,8 @@ export default function SideMenu({
   return (
     <>
       <div
-        className={`fixed cursor-pointer inset-0 z-40 bg-black/40 transition-opacity duration-300 md:hidden ${aberto ? "opacity-100" : "pointer-events-none opacity-0"}`}
         onClick={onFechar}
+        className={`fixed cursor-pointer inset-0 z-40 bg-black/40 transition-opacity duration-300 md:hidden ${aberto ? "opacity-100" : "pointer-events-none opacity-0"}`}
       />
 
       <aside className={`bg-[#176b45] text-white h-screen w-64 flex flex-col justify-start p-4 shadow-xl select-none fixed inset-y-0 left-0 z-50 transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${aberto ? "translate-x-0" : "-translate-x-full"}`}>

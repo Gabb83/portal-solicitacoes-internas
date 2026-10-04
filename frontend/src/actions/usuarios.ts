@@ -7,10 +7,7 @@ interface AtualizarUsuario {
   email: string;
 }
 
-export async function atualizarUsuarioAction(
-  id: number,
-  dados: AtualizarUsuario
-) {
+export async function atualizarUsuarioAction(id: number, dados: AtualizarUsuario) {
   return fetchApiAuth(`/usuarios/${id}`, {
     method: "PUT",
     body: JSON.stringify(dados),

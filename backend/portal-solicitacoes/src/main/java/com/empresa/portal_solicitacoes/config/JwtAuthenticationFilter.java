@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
   private final JwtService jwtService;
 
   public JwtAuthenticationFilter(JwtService jwtService) {
@@ -26,70 +25,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   }
 
   @Override
-protected void doFilterInternal(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain filterChain
-) throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+		String authorization = request.getHeader("Authorization");
 
-    System.out.println(
-        "🔥 JWT FILTER: " +
-        request.getMethod() +
-        " " +
-        request.getRequestURI()
-    );
-
-    String authorization = request.getHeader("Authorization");
-
-    System.out.println(
-        "🔐 AUTHORIZATION: " + authorization
-    );
-
-    if (authorization == null || !authorization.startsWith("Bearer ")) {
-
-        System.out.println("❌ JWT não encontrado");
-
-        filterChain.doFilter(request, response);
-        return;
+    if(authorization == null || !authorization.startsWith("Bearer ")) {
+			filterChain.doFilter(request, response);
+			return;
     }
 
     String token = authorization.substring(7);
 
     try {
+			Jws<Claims> claims = jwtService.validarToken(token);
+			String usuarioId = claims.getPayload().getSubject();
 
-        Jws<Claims> claims = jwtService.validarToken(token);
+			UsernamePasswordAuthenticationToken authentication =
+				new UsernamePasswordAuthenticationToken(
+					usuarioId,
+					null,
+					java.util.Collections.emptyList()
+				);
 
-        String usuarioId = claims.getPayload().getSubject();
+			SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        usuarioId,
-                        null,
-                        java.util.Collections.emptyList()
-                );
-
-        SecurityContextHolder
-                .getContext()
-                .setAuthentication(authentication);
-
-        System.out.println(
-            "✅ JWT VALIDADO - USUARIO: " + usuarioId
-        );
-
-    } catch (Exception e) {
-
-        System.out.println(
-            "❌ JWT INVÁLIDO: " + e.getMessage()
-        );
-
-        SecurityContextHolder.clearContext();
+    } catch(Exception e) {
+      SecurityContextHolder.clearContext();
     }
 
-    System.out.println(
-        "🔎 AUTH: " +
-        SecurityContextHolder.getContext().getAuthentication()
-    );
-
+    System.out.println(SecurityContextHolder.getContext().getAuthentication());
     filterChain.doFilter(request, response);
-}
+	}
 }

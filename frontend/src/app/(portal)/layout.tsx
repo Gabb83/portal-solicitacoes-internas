@@ -30,16 +30,12 @@ export default async function PortalLayout({
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
-  if (!token) {
+  if(!token) {
     return null;
   }
 
-  const payload = JSON.parse(
-    Buffer.from(token.split(".")[1], "base64url").toString()
-  );
-
+  const payload = JSON.parse(Buffer.from(token.split(".")[1], "base64url").toString());
   const usuarioId = Number(payload.sub);
-
   const usuario = await buscarUsuarioId(usuarioId);
 
   return (

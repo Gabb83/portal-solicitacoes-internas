@@ -13,8 +13,7 @@ interface HeaderProps {
 }
 
 export default function Header({
-  usuario,
-  onAbrirMenu,
+  usuario, onAbrirMenu,
 }: HeaderProps) {
   const router = useRouter();
 
@@ -54,7 +53,6 @@ export default function Header({
             {nome}
           </span>
         </Link>
-
         <button
           type="button"
           onClick={handleLogout}

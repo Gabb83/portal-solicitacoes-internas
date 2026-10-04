@@ -8,13 +8,11 @@ export default async function NovaSolicicao() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
-  if (!token) {
+  if(!token) {
     return null;
   }
 
-  const payload = JSON.parse(
-    Buffer.from(token.split(".")[1], "base64url").toString()
-  );
+  const payload = JSON.parse(Buffer.from(token.split(".")[1], "base64url").toString());
 
   const usuario = {
     nome: payload.nome,
@@ -70,7 +68,6 @@ export default async function NovaSolicicao() {
               />
             </div>
           </div>
-
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
               Categoria

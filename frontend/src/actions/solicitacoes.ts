@@ -6,8 +6,6 @@ import { fetchApiAuth } from "@/services/api-server";
 import { IPaginaSolicitacoes, ISolicitacaoApi, ISolicitacaoUpdate } from "@/types/solicitacao";
 
 export async function criarSolicitacao(formData: FormData): Promise<void> {
-  console.log("🔥 SERVER ACTION EXECUTOU");
-
   const categoriaRaw = formData.get("categoriaId");
 
   const payload = {
@@ -15,18 +13,14 @@ export async function criarSolicitacao(formData: FormData): Promise<void> {
     descricao: formData.get("descricao"),
     categoriaId: categoriaRaw ? Number(categoriaRaw) : null,
   };
-
-  console.log("📦 PAYLOAD:", payload);
-
+  
   const resultado = await fetchApiAuth("/solicitacoes", {
     method: "POST",
     body: JSON.stringify(payload),
   });
 
-  console.log("✅ POST PARA SPRING:", resultado);
 
   revalidatePath("/solicitacoes");
-
   redirect("/gerenciar-solicitacoes");
 }
 
@@ -74,23 +68,23 @@ export async function listarSolicitacoesAction(
 ): Promise<IPaginaSolicitacoes> {
   const params = new URLSearchParams();
 
-  if (filtros?.titulo) {
+  if(filtros?.titulo) {
     params.set("titulo", filtros.titulo);
   }
 
-  if (filtros?.categoriaId) {
+  if(filtros?.categoriaId) {
     params.set("categoriaId", String(filtros.categoriaId));
   }
 
-  if (filtros?.status) {
+  if(filtros?.status) {
     params.set("status", filtros.status);
   }
 
-  if (filtros?.dataInicio) {
+  if(filtros?.dataInicio) {
     params.set("dataInicio", filtros.dataInicio);
   }
 
-  if (filtros?.dataFim) {
+  if(filtros?.dataFim) {
     params.set("dataFim", filtros.dataFim);
   }
 

@@ -13,9 +13,9 @@ public interface SolicitacaoRepository extends JpaRepository<Solicitacao, Long>,
   long countByStatus(StatusSolicitacao status);
 
   @Query("""
-      SELECT s.status, COUNT(s)
-      FROM Solicitacao s
-      GROUP BY s.status
+    SELECT s.status, COUNT(s)
+    FROM Solicitacao s
+    GROUP BY s.status
   """)
   List<Object[]> contarPorStatus();
 
