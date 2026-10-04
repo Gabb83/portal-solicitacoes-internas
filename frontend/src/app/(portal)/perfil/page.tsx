@@ -7,16 +7,12 @@ export default async function Perfil() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
-  if (!token) {
+  if(!token) {
     return null;
   }
 
-  const payload = JSON.parse(
-    Buffer.from(token.split(".")[1], "base64url").toString()
-  );
-
+  const payload = JSON.parse(Buffer.from(token.split(".")[1], "base64url").toString());
   const usuarioId = Number(payload.sub);
-
   const usuario = await buscarUsuarioId(usuarioId);
 
   return (
@@ -27,11 +23,8 @@ export default async function Perfil() {
             <div className="absolute left-4 top-14 sm:left-8 sm:top-20">
               <div className="relative">
                 <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-[#176b45] text-2xl font-bold text-white shadow-md sm:h-24 sm:w-24 sm:text-3xl">
-                  {usuario.nome
-                    ? usuario.nome.charAt(0).toUpperCase()
-                    : "?"}
+                  {usuario.nome ? usuario.nome.charAt(0).toUpperCase() : "?"}
                 </div>
-
                 <button
                   type="button"
                   className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow hover:bg-gray-50"

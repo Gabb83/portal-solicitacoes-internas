@@ -56,7 +56,7 @@ export default function GerenciarSolicitações() {
       );
 
       setSolicitacaoEditar(resposta);
-    } catch (error) {
+    } catch(error) {
       console.error(
         "Erro ao buscar solicitação para edição:",
         error
@@ -109,7 +109,7 @@ export default function GerenciarSolicitações() {
       setModalEditarOpen(false);
       setSolicitacaoEditar(null);
 
-    } catch (error) {
+    } catch(error) {
       console.error(
         "Erro ao atualizar solicitação:",
         error
@@ -138,7 +138,7 @@ export default function GerenciarSolicitações() {
 
       setSolicitacaoVisualizar(resposta);
     } catch(error) {
-      console.error("Erro ao buscar solicitação:", error);
+      console.error("Erro ao buscar solicitação: ", error);
       setErroVisualizar(
         "Não foi possível carregar os detalhes da solicitação."
       );
@@ -168,8 +168,8 @@ export default function GerenciarSolicitações() {
 
       setModalOpen(false);
       setSolicitacoesDeletar(null);
-    } catch (error) {
-      console.error("Erro ao deletar solicitação:", error);
+    } catch(error) {
+      console.error("Erro ao deletar solicitação: ", error);
     }
   };
 
@@ -207,7 +207,7 @@ export default function GerenciarSolicitações() {
       );
 
       setSolicitacoes(dadosFormatados);
-    } catch (error) {
+    } catch(error) {
       console.error(error);
       setErro("Não foi possível carregar as solicitações.");
     } finally {

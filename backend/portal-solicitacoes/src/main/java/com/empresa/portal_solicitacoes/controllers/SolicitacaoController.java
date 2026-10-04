@@ -23,51 +23,49 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/solicitacoes")
 public class SolicitacaoController {
-  
   private final SolicitacaoService solicitacaoService;
 
   public SolicitacaoController(SolicitacaoService solicitacaoService) {
     this.solicitacaoService = solicitacaoService;
   }
+  
   @GetMapping 
   public ResponseEntity<Page<SolicitacaoResponseDTO>> listarComFiltros(
-            @RequestParam(required = false) String titulo,
-            @RequestParam(required = false) Long categoriaId,
-            @RequestParam(required = false) StatusSolicitacao status,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
-            @PageableDefault(size = 10, sort = "dataCriacao", direction = Sort.Direction.DESC) Pageable pageable) {
+    @RequestParam(required = false) String titulo,
+    @RequestParam(required = false) Long categoriaId,
+    @RequestParam(required = false) StatusSolicitacao status,
+    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
+    @PageableDefault(size = 10, sort = "dataCriacao", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        Page<SolicitacaoResponseDTO> resultado = solicitacaoService
-                .buscarComFiltros(titulo, categoriaId, status, dataInicio, dataFim, pageable);
-        return ResponseEntity.ok(resultado);
-    }
+    Page<SolicitacaoResponseDTO> resultado = solicitacaoService.buscarComFiltros(titulo, categoriaId, status, dataInicio, dataFim, pageable);
+    return ResponseEntity.ok(resultado);
+  }
 
   @PostMapping
   public ResponseEntity<SolicitacaoResponseDTO> criar(@RequestBody @Valid SolicitacaoRequestDTO dto) {
-      SolicitacaoResponseDTO nova = solicitacaoService.criar(dto);
-      return ResponseEntity.status(HttpStatus.CREATED).body(nova);
+    SolicitacaoResponseDTO nova = solicitacaoService.criar(dto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(nova);
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<SolicitacaoResponseDTO> buscarPorId(@PathVariable Long id) {
-      return ResponseEntity.ok(solicitacaoService.buscarPorId(id));
+    return ResponseEntity.ok(solicitacaoService.buscarPorId(id));
   }
 
   @PutMapping("/{id}")
-    public ResponseEntity<SolicitacaoResponseDTO> atualizar(
-            @PathVariable Long id,
-            @RequestBody @Valid SolicitacaoUpdateDTO dto) {
+  public ResponseEntity<SolicitacaoResponseDTO> atualizar(
+    @PathVariable Long id,
+    @RequestBody @Valid SolicitacaoUpdateDTO dto) {
 
-        return ResponseEntity.ok(
-            solicitacaoService.atualizar(id, dto)
-        );
-    }
+    return ResponseEntity.ok(
+      solicitacaoService.atualizar(id, dto)
+    );
+  }
 
-  // 5. Rota DELETE
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deletar(@PathVariable Long id) {
-      solicitacaoService.deletar(id);
-      return ResponseEntity.noContent().build();
+    solicitacaoService.deletar(id);
+    return ResponseEntity.noContent().build();
   }
 }

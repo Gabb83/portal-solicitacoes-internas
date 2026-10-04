@@ -1,13 +1,10 @@
 import { cookies } from "next/headers";
 
-export async function fetchApiAuth<T>(
-  endpoint: string,
-  options?: RequestInit
-): Promise<T> {
+export async function fetchApiAuth<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
-  if (!token) {
+  if(!token) {
     throw new Error("Usuário não autenticado");
   }
 
@@ -23,7 +20,7 @@ export async function fetchApiAuth<T>(
     cache: "no-store",
   });
 
-  if (!response.ok) {
+  if(!response.ok) {
     const errorBody = await response.text();
 
     throw new Error(
@@ -31,7 +28,7 @@ export async function fetchApiAuth<T>(
     );
   }
 
-  if (response.status === 204) {
+  if(response.status === 204) {
     return undefined as T;
   }
 

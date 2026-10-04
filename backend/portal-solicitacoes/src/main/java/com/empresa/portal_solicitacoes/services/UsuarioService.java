@@ -40,28 +40,27 @@ public class UsuarioService {
 
   @Transactional(readOnly = true)
   public List<UsuarioResponseDTO> listarTodos() {
-      return usuarioRepository.findAll()
-              .stream()
-              .map(UsuarioResponseDTO::fromEntity)
-              .toList();
+    return usuarioRepository.findAll()
+      .stream()
+      .map(UsuarioResponseDTO::fromEntity)
+      .toList();
   }
 
   @Transactional
   public UsuarioResponseDTO atualizar(Long id, UsuarioUpdateDTO dto) {
+    Usuario usuario = usuarioRepository.findById(id)
+      .orElseThrow(() ->
+      new ResourceNotFoundException(
+        "Usuário não encontrado com o ID: " + id
+      )
+    );
 
-      Usuario usuario = usuarioRepository.findById(id)
-              .orElseThrow(() ->
-                  new ResourceNotFoundException(
-                      "Usuário não encontrado com o ID: " + id
-                  )
-              );
+    usuario.setNome(dto.nome());
+    usuario.setEmail(dto.email());
 
-      usuario.setNome(dto.nome());
-      usuario.setEmail(dto.email());
+    Usuario atualizado = usuarioRepository.save(usuario);
 
-      Usuario atualizado = usuarioRepository.save(usuario);
-
-      return UsuarioResponseDTO.fromEntity(atualizado);
+    return UsuarioResponseDTO.fromEntity(atualizado);
   }
 
   @Transactional(readOnly = true)
@@ -78,9 +77,9 @@ public class UsuarioService {
   @Transactional
     public void deletar(Long id) {
       Usuario usuario = usuarioRepository.findById(id)
-              .orElseThrow(() -> new ResourceNotFoundException(
-                      "Usuário não encontrado com o ID: " + id
-              ));
+        .orElseThrow(() -> new ResourceNotFoundException(
+        "Usuário não encontrado com o ID: " + id
+      ));
 
       usuarioRepository.delete(usuario);
     }

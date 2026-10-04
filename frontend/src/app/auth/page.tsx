@@ -15,6 +15,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null); 
 
+  const dataAnoHoje = new Date().getFullYear();
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
@@ -23,7 +25,7 @@ export default function Login() {
 
       const resultado = await autenticar(email, senha);
 
-      if (!resultado.sucesso) {
+      if(!resultado.sucesso) {
         setErro(resultado.erro);
         return;
       }
@@ -31,7 +33,7 @@ export default function Login() {
       router.push("/");
       router.refresh();
 
-    } catch (error) {
+    } catch(error) {
       console.error("Erro ao realizar login:", error);
       setErro("Não foi possível realizar o login.");
 
@@ -77,7 +79,6 @@ export default function Login() {
                     E-mail
                   </label>
                 </div>
-
                 <div className="relative w-full">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -138,7 +139,7 @@ export default function Login() {
             </div>  
           </div>
           <p className="text-xs font-medium text-white/60">
-            © 2026 Portal de Solicitações Internas
+            © {dataAnoHoje} Portal de Solicitações Internas
           </p>
         </div>
       </div>

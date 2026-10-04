@@ -16,7 +16,7 @@ export default function ModalVisualizarSolicitacao({
 }: ModalVisualizarSolicitacaoProps) {
 
   function formatarData(data: string | undefined) {
-    if (!data) return "Não informada";
+    if(!data) return "Não informada";
 
     const dataObj = new Date(data);
     if (isNaN(dataObj.getTime())) return "Data inválida";

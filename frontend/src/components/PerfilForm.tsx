@@ -26,7 +26,7 @@ export default function PerfilForm({ usuario }: PerfilFormProps) {
   const router = useRouter()
 
   function formatarData(data: string) {
-    if (!data) return "";
+    if(!data) return "";
 
     return new Intl.DateTimeFormat("pt-BR", {
       day: "2-digit",
@@ -43,7 +43,7 @@ export default function PerfilForm({ usuario }: PerfilFormProps) {
   }
 
   async function salvar() {
-    if (!nome.trim() || !email.trim()) {
+    if(!nome.trim() || !email.trim()) {
       setErro("Nome e e-mail são obrigatórios.");
       return;
     }
@@ -59,7 +59,7 @@ export default function PerfilForm({ usuario }: PerfilFormProps) {
 
       setEditando(false);
       router.refresh();
-    } catch (error) {
+    } catch(error) {
       console.error("Erro ao atualizar usuário:", error);
       setErro("Não foi possível atualizar seus dados.");
     } finally {
@@ -74,7 +74,6 @@ export default function PerfilForm({ usuario }: PerfilFormProps) {
           <h2 className="text-xl font-bold text-gray-800">
             Meu Perfil
           </h2>
-
           <p className="mt-1 text-sm text-gray-500">
             Gerencie suas informações pessoais
           </p>
@@ -103,13 +102,11 @@ export default function PerfilForm({ usuario }: PerfilFormProps) {
           <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
             Nome Completo
           </label>
-
           <div className="relative flex min-w-0 items-center">
             <User
               size={18}
               className="absolute left-3 shrink-0 text-gray-400"
             />
-
             <input
               type="text"
               value={nome}
@@ -128,13 +125,11 @@ export default function PerfilForm({ usuario }: PerfilFormProps) {
           <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
             E-mail
           </label>
-
           <div className="relative flex min-w-0 items-center">
             <AtSign
               size={18}
               className="absolute left-3 shrink-0 text-gray-400"
             />
-
             <input
               type="email"
               value={email}
@@ -153,13 +148,11 @@ export default function PerfilForm({ usuario }: PerfilFormProps) {
           <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
             ID da Conta
           </label>
-
           <div className="relative flex min-w-0 items-center">
             <Hash
               size={18}
               className="absolute left-3 shrink-0 text-gray-400"
             />
-
             <input
               readOnly
               type="text"
@@ -173,13 +166,11 @@ export default function PerfilForm({ usuario }: PerfilFormProps) {
           <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
             Membro desde
           </label>
-
           <div className="relative flex min-w-0 items-center">
             <Calendar
               size={18}
               className="absolute left-3 shrink-0 text-gray-400"
             />
-
             <input
               readOnly
               type="text"
@@ -201,7 +192,6 @@ export default function PerfilForm({ usuario }: PerfilFormProps) {
             <X size={16} />
             Cancelar
           </button>
-
           <button
             type="button"
             onClick={salvar}
