@@ -88,7 +88,7 @@ portal-solicitacoes-internas/
 │   └── schema.sql
 │
 ├── docs/
-│   └── 
+│   └── (relatórios, diagramas e documentação adicional e demonstrações do projeto)
 │
 ├── frontend/
 │   ├── public/
